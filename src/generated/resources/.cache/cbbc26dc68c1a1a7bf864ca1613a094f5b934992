@@ -1,3 +1,6 @@
-// 1.21	2024-07-05T11:31:56.9432143	Item Models: cosmic_voyage
+// 1.21	2024-07-06T04:10:22.5446435	Item Models: cosmic_voyage
 1640f3d589a7985bb9fc1c12e2bac39f7137a15c assets/cosmic_voyage/models/item/cosmic_test.json
-6e798d953058632dfd5f6fe3a8af7da7fc05ece0 assets/cosmic_voyage/models/item/office_light.json
+daa0287fc2cf2e3f69ac8f6a8dfcee55eda8854b assets/cosmic_voyage/models/item/electric_pillar.json
+044ee65d02f04557b76b7e286cb0a16ed002afc1 assets/cosmic_voyage/models/item/electromechanic_pillar.json
+7b4e567980cb7e348b745940a1feaa556bfb76b9 assets/cosmic_voyage/models/item/hull_block.json
+32e3b29bdb4c8f86f078f5872c7f32daea190d3a assets/cosmic_voyage/models/item/mechanic_pillar.json

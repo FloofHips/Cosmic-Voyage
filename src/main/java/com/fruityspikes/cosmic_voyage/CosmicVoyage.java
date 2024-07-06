@@ -125,7 +125,7 @@ public class CosmicVoyage
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
-            event.accept(CVBlockRegistry.OFFICE_LIGHT);
+            event.accept(CVBlockRegistry.HULL_BLOCK);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

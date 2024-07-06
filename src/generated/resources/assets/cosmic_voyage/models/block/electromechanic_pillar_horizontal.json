@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column_horizontal",
+  "textures": {
+    "end": "cosmic_voyage:block/electromechanic_pillar_top",
+    "side": "cosmic_voyage:block/electromechanic_pillar"
+  }
+}

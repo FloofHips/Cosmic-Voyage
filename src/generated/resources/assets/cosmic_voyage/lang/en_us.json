@@ -1,5 +1,8 @@
 {
+  "block.cosmic_voyage.electric_pillar": "Electric Pillar",
+  "block.cosmic_voyage.electromechanic_pillar": "Electromechanic Pillar",
   "block.cosmic_voyage.example_block": "Example Block",
-  "block.cosmic_voyage.office_light": "office Light",
+  "block.cosmic_voyage.hull_block": "Hull Block",
+  "block.cosmic_voyage.mechanic_pillar": "Mechanic Pillar",
   "item.cosmic_voyage.cosmic_test": "Cosmic Test"
 }

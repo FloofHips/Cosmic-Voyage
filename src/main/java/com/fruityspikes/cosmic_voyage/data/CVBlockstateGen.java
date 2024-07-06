@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,7 +27,8 @@ public class CVBlockstateGen extends BlockStateProvider {
     protected void registerStatesAndModels() {
         Set<DeferredBlock<Block>> blocks = new HashSet(BLOCKS.getEntries());
 
-        basicBlock(CVBlockRegistry.OFFICE_LIGHT);
+        basicBlock(CVBlockRegistry.HULL_BLOCK);
+        DataHelper.takeAll(blocks, b -> b.get() instanceof RotatedPillarBlock).forEach(this::rotatedPillarBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof StairBlock).forEach(this::stairsBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof WallBlock).forEach(this::wallBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof FenceBlock).forEach(this::fenceBlock);
@@ -58,6 +60,9 @@ public class CVBlockstateGen extends BlockStateProvider {
         String name = blockRegistryObject.getId().getPath();
         String baseName = name.substring(0, name.length() - 6);
         fenceBlock((FenceBlock) blockRegistryObject.get(), prefix("block/" + baseName));
+    }
+    public void rotatedPillarBlock(DeferredBlock<Block> blockRegistryObject) {
+        logBlock((RotatedPillarBlock) blockRegistryObject.get());
     }
 
     public void wallBlock(DeferredBlock<Block> blockRegistryObject) {

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "cosmic_voyage:block/office_light"
+    "all": "cosmic_voyage:block/hull_block"
   }
 }
