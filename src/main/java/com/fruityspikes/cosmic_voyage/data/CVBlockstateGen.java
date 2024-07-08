@@ -28,6 +28,7 @@ public class CVBlockstateGen extends BlockStateProvider {
         Set<DeferredBlock<Block>> blocks = new HashSet(BLOCKS.getEntries());
 
         basicBlock(CVBlockRegistry.HULL_BLOCK);
+
         DataHelper.takeAll(blocks, b -> b.get() instanceof RotatedPillarBlock).forEach(this::rotatedPillarBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof StairBlock).forEach(this::stairsBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof WallBlock).forEach(this::wallBlock);

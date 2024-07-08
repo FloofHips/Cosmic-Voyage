@@ -1,6 +1,8 @@
-// 1.21	2024-07-06T04:10:22.5446435	Item Models: cosmic_voyage
+// 1.21	2024-07-06T19:06:00.732853	Item Models: cosmic_voyage
 1640f3d589a7985bb9fc1c12e2bac39f7137a15c assets/cosmic_voyage/models/item/cosmic_test.json
-daa0287fc2cf2e3f69ac8f6a8dfcee55eda8854b assets/cosmic_voyage/models/item/electric_pillar.json
-044ee65d02f04557b76b7e286cb0a16ed002afc1 assets/cosmic_voyage/models/item/electromechanic_pillar.json
 7b4e567980cb7e348b745940a1feaa556bfb76b9 assets/cosmic_voyage/models/item/hull_block.json
-32e3b29bdb4c8f86f078f5872c7f32daea190d3a assets/cosmic_voyage/models/item/mechanic_pillar.json
+99ac661d3b5728d659f17dced77e26d1aecc8177 assets/cosmic_voyage/models/item/plastic_block.json
+9a4965feb5d74c768b003659e99eae87853688a3 assets/cosmic_voyage/models/item/plastic_pillar.json
+69218195d77fe357d62a4dc6d3566209c4d7937f assets/cosmic_voyage/models/item/plastic_stairs.json
+8e500ed55ece4fb650d9bd135a5df2c76d46ddc8 assets/cosmic_voyage/models/item/plating_pillar.json
+4bfa0dcb568c2101482e939c51deaa092d48bacd assets/cosmic_voyage/models/item/reinforced_plastic_pillar.json

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "cosmic_voyage:block/computer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "cosmic_voyage:block/computer"
+    },
+    "facing=south": {
+      "model": "cosmic_voyage:block/computer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "cosmic_voyage:block/computer",
+      "y": 270
+    }
+  }
+}

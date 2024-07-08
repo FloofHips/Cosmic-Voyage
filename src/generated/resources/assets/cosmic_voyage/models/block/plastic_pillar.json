@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "cosmic_voyage:block/plastic_pillar_top",
+    "side": "cosmic_voyage:block/plastic_pillar"
+  }
+}
