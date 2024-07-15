@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "cosmic_voyage:block/outlet",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "cosmic_voyage:block/outlet",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "cosmic_voyage:block/outlet",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "cosmic_voyage:block/outlet",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "cosmic_voyage:block/outlet"
+    },
+    "facing=west": {
+      "model": "cosmic_voyage:block/outlet",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

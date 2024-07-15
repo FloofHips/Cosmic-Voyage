@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "cosmic_voyage:block/outlet_bottom",
+    "east": "cosmic_voyage:block/outlet_side",
+    "north": "cosmic_voyage:block/outlet_side",
+    "particle": "cosmic_voyage:block/outlet_side",
+    "south": "cosmic_voyage:block/outlet_side",
+    "up": "cosmic_voyage:block/outlet_top",
+    "west": "cosmic_voyage:block/outlet_side"
+  }
+}
