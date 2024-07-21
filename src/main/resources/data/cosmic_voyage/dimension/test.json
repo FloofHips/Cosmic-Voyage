@@ -1,7 +1,7 @@
 {
   "type": "minecraft:overworld",
   "generator": {
-    "type": "minecraft:noise",
+    "type": "cosmic_voyage:venus",
     "settings": "minecraft:overworld",
     "biome_source": {
       "type": "minecraft:fixed",

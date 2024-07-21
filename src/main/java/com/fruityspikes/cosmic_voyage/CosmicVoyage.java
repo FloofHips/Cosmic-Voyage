@@ -6,6 +6,7 @@ import com.fruityspikes.cosmic_voyage.data.CVItemModels;
 import com.fruityspikes.cosmic_voyage.data.CVLangGen;
 import com.fruityspikes.cosmic_voyage.server.registries.CVBlockEntityRegistry;
 import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
+import com.fruityspikes.cosmic_voyage.server.registries.CVChunkGeneratorRegistry;
 import com.fruityspikes.cosmic_voyage.server.registries.CVItemRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -93,6 +94,7 @@ public class CosmicVoyage
         CVBlockRegistry.BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so block entities get registered
         CVBlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
+        CVChunkGeneratorRegistry.CHUNK_GENS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered

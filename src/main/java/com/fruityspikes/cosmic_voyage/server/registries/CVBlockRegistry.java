@@ -5,6 +5,7 @@ import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.blocks.ComputerBlock;
 import com.fruityspikes.cosmic_voyage.server.blocks.LampuleBlock;
 import com.fruityspikes.cosmic_voyage.server.blocks.OutletBlock;
+import com.fruityspikes.cosmic_voyage.server.blocks.ShipRoomGateBlock;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -68,6 +69,12 @@ public class CVBlockRegistry {
             .sound(SoundType.NETHERITE_BLOCK)
     );
     public static final DeferredBlock<Block> LAMPULE = registerBlock("lampule", LampuleBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
+    public static final DeferredBlock<Block> SHIP_ROOM_GATE = registerBlock("ship_room_gate", ShipRoomGateBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
