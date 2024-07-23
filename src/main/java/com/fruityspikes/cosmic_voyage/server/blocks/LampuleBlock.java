@@ -53,8 +53,8 @@ public class LampuleBlock extends RodBlock {
         pLevel.gameEvent(pPlayer, (Boolean)pState.getValue(LIT) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
     }
     protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
-        float f = (Boolean)pState.getValue(LIT) ? 0.6F : 0.5F;
-        pLevel.playSound(pPlayer, pPos, SoundEvents.COPPER_BULB_TURN_ON, SoundSource.BLOCKS, 0.3F, f);
+        float f = (Boolean)pState.getValue(LIT) ? 0.6F : 1.0F;
+        pLevel.playSound(pPlayer, pPos, SoundEvents.VAULT_ACTIVATE, SoundSource.BLOCKS, 0.6F, f);
     }
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(new Property[]{FACING, LIT});

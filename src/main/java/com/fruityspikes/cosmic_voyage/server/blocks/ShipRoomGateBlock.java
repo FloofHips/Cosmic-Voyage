@@ -62,7 +62,7 @@ public class ShipRoomGateBlock extends Block {
                         for (int z = -1; z <= 1; z++) {
                             if (x == 0 && y == 0 && z == 0) continue;
                             BlockPos particlePos = pPos.offset(x, y, z);
-                            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.getX() + 0.5, particlePos.getY() + 0.5, particlePos.getZ() + 0.5, 1, 0.0, 0.0, 0.0, 0.0);
+                            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.getX() + 0.5, particlePos.getY() + 0.5, particlePos.getZ() + 0.5, 5, 0.5, 0.5, 0.5, 0.2);
                         }
                     }
                 }
@@ -95,7 +95,7 @@ public class ShipRoomGateBlock extends Block {
                 }
             }
         }
-        level.playSound(null, pos, SoundEvents.VAULT_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
+        level.playSound(null, pos, SoundEvents.VAULT_OPEN_SHUTTER, SoundSource.BLOCKS, 1.0f, 1.0f);
 
         BlockPos adjacentChunkPos = getAdjacentChunkPos(pos, lastHitFace);
         placeStructure(level, adjacentChunkPos);

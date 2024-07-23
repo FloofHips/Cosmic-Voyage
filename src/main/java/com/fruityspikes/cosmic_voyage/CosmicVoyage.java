@@ -1,16 +1,17 @@
 package com.fruityspikes.cosmic_voyage;
 
+import com.fruityspikes.cosmic_voyage.client.client_registries.CVModelLayers;
+import com.fruityspikes.cosmic_voyage.client.models.ShipModel;
+import com.fruityspikes.cosmic_voyage.client.renderers.ShipRenderer;
 import com.fruityspikes.cosmic_voyage.data.CVBlockstateGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModelGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModels;
 import com.fruityspikes.cosmic_voyage.data.CVLangGen;
-import com.fruityspikes.cosmic_voyage.server.registries.CVBlockEntityRegistry;
-import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
-import com.fruityspikes.cosmic_voyage.server.registries.CVChunkGeneratorRegistry;
-import com.fruityspikes.cosmic_voyage.server.registries.CVItemRegistry;
+import com.fruityspikes.cosmic_voyage.server.registries.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry.SHIP;
 import static com.fruityspikes.cosmic_voyage.server.registries.CVItemRegistry.ITEMS;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -95,6 +97,7 @@ public class CosmicVoyage
         // Register the Deferred Register to the mod event bus so block entities get registered
         CVBlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
         CVChunkGeneratorRegistry.CHUNK_GENS.register(modEventBus);
+        CVEntityRegistry.ENTITIES.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
@@ -148,9 +151,17 @@ public class CosmicVoyage
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+        @SubscribeEvent
+        public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(CVModelLayers.SHIP, ShipModel::createBodyLayer);
+        }
+
+        @SubscribeEvent
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(SHIP.get(), ShipRenderer::new);
         }
     }
     public void gatherData(GatherDataEvent event)

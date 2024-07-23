@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import org.jetbrains.annotations.Nullable;
 
-public class ComputerBlock extends BaseEntityBlock {
+public class ComputerBlock extends Block{
     public static final MapCodec<ComputerBlock> CODEC = simpleCodec(ComputerBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public ComputerBlock(Properties pProperties) {
@@ -22,7 +22,7 @@ public class ComputerBlock extends BaseEntityBlock {
         this.registerDefaultState((this.stateDefinition.any()).setValue(FACING, Direction.NORTH));
     }
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected MapCodec<? extends ComputerBlock> codec() {
         return CODEC;
     }
 
@@ -36,9 +36,4 @@ public class ComputerBlock extends BaseEntityBlock {
         pBuilder.add(FACING);
     }
 
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return null;
-    }
 }
