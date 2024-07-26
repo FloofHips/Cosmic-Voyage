@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/stairs",
-  "textures": {
-    "bottom": "cosmic_voyage:block/plastic",
-    "side": "cosmic_voyage:block/plastic",
-    "top": "cosmic_voyage:block/plastic"
-  }
-}

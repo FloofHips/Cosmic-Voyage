@@ -28,6 +28,10 @@ public class CVBlockstateGen extends BlockStateProvider {
         Set<DeferredBlock<Block>> blocks = new HashSet(BLOCKS.getEntries());
 
         basicBlock(CVBlockRegistry.HULL_BLOCK);
+        basicBlock(CVBlockRegistry.EPOXY);
+        basicBlock(CVBlockRegistry.SEDIMENT);
+        basicBlock(CVBlockRegistry.SULFUR_DEPOSIT);
+        basicBlock(CVBlockRegistry.DARK_SULFUR_DEPOSIT);
 
         DataHelper.takeAll(blocks, b -> b.get() instanceof RotatedPillarBlock).forEach(this::rotatedPillarBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof StairBlock).forEach(this::stairsBlock);
