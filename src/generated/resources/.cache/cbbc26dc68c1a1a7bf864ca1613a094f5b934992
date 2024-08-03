@@ -1,11 +1,14 @@
-// 1.21	2024-07-25T23:35:53.825828	Item Models: cosmic_voyage
+// 1.21	2024-08-03T03:18:29.6828506	Item Models: cosmic_voyage
+79c6ebc55ff054b98e101c7f08242d98c0d5fca1 assets/cosmic_voyage/models/item/centipede_inner_wall.json
 3853eaf3e7d0a11a491a25e2e35cae0e0f67e9b9 assets/cosmic_voyage/models/item/chunk_delimiter.json
 4655a8a4c696c8d2815eb5f6a54e8a199794760b assets/cosmic_voyage/models/item/computer.json
+d871b5d07e79a79a1209eb1dd7b1e89425889d5c assets/cosmic_voyage/models/item/concrete.json
 1640f3d589a7985bb9fc1c12e2bac39f7137a15c assets/cosmic_voyage/models/item/cosmic_test.json
 50b1cf997b69b532ea3843f2d7956a4e7784b681 assets/cosmic_voyage/models/item/dark_sulfur_deposit.json
 496e82f90aa833553d000ef878b3f0aa0d69c00c assets/cosmic_voyage/models/item/duralumin_pillar.json
 bf1f57cd308af649d2c19218b9d27bad686267c7 assets/cosmic_voyage/models/item/epoxy.json
 7f96c9cdcdceb617fe76ac99bd2d21cc1caf05de assets/cosmic_voyage/models/item/epoxy_pillar.json
+ff533a9e5065feba2663120b69c16e0353754128 assets/cosmic_voyage/models/item/epoxy_slab.json
 8b9e0a0bae037c904f73bd0cddda7a12ade1a774 assets/cosmic_voyage/models/item/epoxy_stairs.json
 7b4e567980cb7e348b745940a1feaa556bfb76b9 assets/cosmic_voyage/models/item/hull_block.json
 0e4267c4e3e01bfd2a419efa2ee93200ceeaa82d assets/cosmic_voyage/models/item/lampule.json
@@ -16,3 +19,6 @@ f243730f5afa4a7e240a504bb538be69c6fe6d3b assets/cosmic_voyage/models/item/outlet
 718d6f5131a7ff6b08884e0810fa0c49075460f2 assets/cosmic_voyage/models/item/sediment.json
 c5badf534c10debec2109665a5b6aae06e892717 assets/cosmic_voyage/models/item/ship_room_gate.json
 0d8ca684b6e6b8b43427af83f584a9f299c65a98 assets/cosmic_voyage/models/item/sulfur_deposit.json
+36ef490bdd5ecd3247c848cd65e59a4476689bb8 assets/cosmic_voyage/models/item/tin.json
+c8179869464bd3db588121f38a1667f030218245 assets/cosmic_voyage/models/item/tin_door.json
+b0d7992c2bba94a859f3191d8f084ca0d984221d assets/cosmic_voyage/models/item/tin_stairs.json

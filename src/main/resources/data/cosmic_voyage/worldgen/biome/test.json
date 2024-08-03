@@ -24,13 +24,14 @@
     ]
   },
   "features": [
-    [],
-    [],
-    [],
-    [],
     [
-      "cosmic_voyage:tree"
-    ],
+	
+      "cosmic_voyage:venus_boulder"
+	],
+    [],
+    [],
+    [],
+    [],
     [],
     [],
     []

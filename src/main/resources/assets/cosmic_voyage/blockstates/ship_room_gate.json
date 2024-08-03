@@ -1,7 +1,7 @@
 {
   "variants": {
     "piece=0": {
-      "model": "cosmic_voyage:block/ship_room_gate_0"
+      "model": "cosmic_voyage:block/ship_room_gate"
     },
     "piece=1": {
       "model": "cosmic_voyage:block/ship_room_gate_1"

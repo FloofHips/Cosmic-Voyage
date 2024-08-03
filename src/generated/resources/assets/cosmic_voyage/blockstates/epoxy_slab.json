@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "cosmic_voyage:block/epoxy_slab"
+    },
+    "type=double": {
+      "model": "cosmic_voyage:block/epoxy"
+    },
+    "type=top": {
+      "model": "cosmic_voyage:block/epoxy_slab_top"
+    }
+  }
+}

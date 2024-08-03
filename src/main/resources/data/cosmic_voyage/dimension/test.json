@@ -2,7 +2,7 @@
   "type": "minecraft:overworld",
   "generator": {
     "type": "cosmic_voyage:venus",
-    "settings": "minecraft:overworld",
+    "settings": "cosmic_voyage:venus",
     "biome_source": {
       "type": "minecraft:fixed",
       "biome": "cosmic_voyage:test"

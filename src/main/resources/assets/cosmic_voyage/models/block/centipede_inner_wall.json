@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "cosmic_voyage:block/sediment"
+    "all": "cosmic_voyage:block/centipede_inner_wall"
   }
 }

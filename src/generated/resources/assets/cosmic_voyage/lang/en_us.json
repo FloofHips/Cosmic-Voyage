@@ -1,5 +1,7 @@
 {
+  "block.cosmic_voyage.centipede_inner_wall": "Centipede Inner Wall",
   "block.cosmic_voyage.computer": "Computer",
+  "block.cosmic_voyage.concrete": "Concrete",
   "block.cosmic_voyage.dark_sulfur_deposit": "Dark Sulfur Deposit",
   "block.cosmic_voyage.duralumin_pillar": "Duralumin Pillar",
   "block.cosmic_voyage.epoxy": "Epoxy",
@@ -13,6 +15,9 @@
   "block.cosmic_voyage.sediment": "Sediment",
   "block.cosmic_voyage.ship_room_gate": "Ship Room Gate",
   "block.cosmic_voyage.sulfur_deposit": "Sulfur Deposit",
+  "block.cosmic_voyage.tin": "Tin",
+  "block.cosmic_voyage.tin_door": "Tin Door",
+  "block.cosmic_voyage.tin_stairs": "Tin Stairs",
   "item.cosmic_voyage.chunk_delimiter": "Chunk Delimiter",
   "item.cosmic_voyage.cosmic_test": "Cosmic Test",
   "item.cosmic_voyage.platform_placer": "Platform Placer",

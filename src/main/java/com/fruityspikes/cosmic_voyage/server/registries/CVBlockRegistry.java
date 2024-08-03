@@ -8,13 +8,17 @@ import com.fruityspikes.cosmic_voyage.server.blocks.OutletBlock;
 import com.fruityspikes.cosmic_voyage.server.blocks.ShipRoomGateBlock;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 public class CVBlockRegistry {
+
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CosmicVoyage.MODID);
     //public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
     public static final DeferredBlock<Block> COMPUTER = registerBlock("computer", ComputerBlock::new, BlockBehaviour.Properties.of()
@@ -41,13 +45,13 @@ public class CVBlockRegistry {
                             .strength(1.5F, 6.0F)
                             .sound(SoundType.COPPER_BULB)
             );
-    public static final DeferredBlock<Block> EPOXY_SLAB = BLOCKS.registerBlock("epoxy_slab", SlabBlock::new, BlockBehaviour.Properties.of()
+    public static final DeferredBlock<Block> EPOXY_SLAB = registerBlock("epoxy_slab", SlabBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
             .sound(SoundType.COPPER_BULB)
     );
-    public static final DeferredBlock<Block> EPOXY_STAIRS = registerStair("epoxy_stairs", () -> new StairBlock(
+    public static final DeferredBlock<Block> EPOXY_STAIRS = registerSpecial("epoxy_stairs", () -> new StairBlock(
             EPOXY.get().defaultBlockState(),
             BlockBehaviour.Properties.ofFullCopy(EPOXY.get()).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> REINFORCED_EPOXY_PILLAR = registerBlock("reinforced_epoxy_pillar", RotatedPillarBlock::new, BlockBehaviour.Properties.of()
@@ -100,14 +104,37 @@ public class CVBlockRegistry {
             .strength(1.5F, 6.0F)
             .sound(SoundType.FUNGUS)
     );
-
+    public static final DeferredBlock<Block> CENTIPEDE_INNER_WALL = registerBlock("centipede_inner_wall", Block::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
+    public static final DeferredBlock<Block> TIN = registerBlock("tin", Block::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
+    public static final DeferredBlock<Block> TIN_DOOR = registerSpecial("tin_door", () -> new DoorBlock(
+            CVBlockSetTypes.TIN,
+            BlockBehaviour.Properties.ofFullCopy(TIN.get()).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredBlock<Block> TIN_STAIRS = registerSpecial("tin_stairs", () -> new StairBlock(
+            TIN.get().defaultBlockState(),
+            BlockBehaviour.Properties.ofFullCopy(EPOXY.get()).sound(SoundType.COPPER_GRATE)));
+    public static final DeferredBlock<Block> CONCRETE = registerBlock("concrete", Block::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.BASALT)
+    );
     private static <T extends Block> DeferredBlock<Block> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends T> func , BlockBehaviour.Properties props) {
         DeferredBlock<Block> toReturn = BLOCKS.registerBlock(name, func, props);
         CVItemRegistry.ITEMS.registerSimpleBlockItem(name, toReturn);
         return toReturn;
     }
 
-    private static <T extends Block> DeferredBlock<Block> registerStair(String name, Supplier<? extends T> supp) {
+    private static <T extends Block> DeferredBlock<Block> registerSpecial(String name, Supplier<? extends T> supp) {
         DeferredBlock<Block> toReturn = BLOCKS.register(name, supp);
         CVItemRegistry.ITEMS.registerSimpleBlockItem(name, toReturn);
         return toReturn;

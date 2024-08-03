@@ -28,7 +28,10 @@ public class VenusBoulderFeature extends Feature<NoneFeatureConfiguration> imple
         RandomSource random = context.random();
         SimplexNoise noise = new SimplexNoise(random);
 
-        // Replace solid blocks within a spherical radius of 5 blocks with yellow wool
+        if (world.getBlockState(pos.offset(0,-1,0))==Blocks.AIR.defaultBlockState()) {
+            return false;
+        }
+            // Replace solid blocks within a spherical radius of 5 blocks with yellow wool
         int radius = 4 + random.nextInt(5);
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {

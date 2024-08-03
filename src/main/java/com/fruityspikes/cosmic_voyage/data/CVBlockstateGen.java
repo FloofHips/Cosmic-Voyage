@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.data;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
@@ -32,12 +33,15 @@ public class CVBlockstateGen extends BlockStateProvider {
         basicBlock(CVBlockRegistry.SEDIMENT);
         basicBlock(CVBlockRegistry.SULFUR_DEPOSIT);
         basicBlock(CVBlockRegistry.DARK_SULFUR_DEPOSIT);
+        basicBlock(CVBlockRegistry.TIN);
+        doorBlockWithRenderType((DoorBlock) CVBlockRegistry.TIN_DOOR.get(), ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/tin_door_bottom"), ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/tin_door_top"), "minecraft:cutout");
 
         DataHelper.takeAll(blocks, b -> b.get() instanceof RotatedPillarBlock).forEach(this::rotatedPillarBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof StairBlock).forEach(this::stairsBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof WallBlock).forEach(this::wallBlock);
         DataHelper.takeAll(blocks, b -> b.get() instanceof FenceBlock).forEach(this::fenceBlock);
         Collection<DeferredBlock<Block>> slabs = DataHelper.takeAll(blocks, b -> b.get() instanceof SlabBlock);
+        slabs.forEach(this::slabBlock);
     }
 
     public void basicBlock(DeferredBlock<Block> block) {

@@ -1,5 +1,6 @@
 package com.fruityspikes.cosmic_voyage.server.chunk_generators;
 
+import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -70,14 +71,15 @@ public class VenusChunkGenerator extends NoiseBasedChunkGenerator {
 
     private BlockState getBlockStateFromNoise(double noiseValue) {
         // Map noise value to different wool colors
-        if (noiseValue < -0.5) {
-            return Blocks.RED_WOOL.defaultBlockState();
-        } else if (noiseValue < 0) {
-            return Blocks.ORANGE_WOOL.defaultBlockState();
-        } else if (noiseValue < 0.5) {
-            return Blocks.YELLOW_WOOL.defaultBlockState();
-        } else {
-            return Blocks.LIME_WOOL.defaultBlockState();
-        }
+//        if (noiseValue < -0.5) {
+//            return Blocks.RED_WOOL.defaultBlockState();
+//        } else if (noiseValue < 0) {
+//            return Blocks.ORANGE_WOOL.defaultBlockState();
+//        } else if (noiseValue < 0.5) {
+//            return Blocks.YELLOW_WOOL.defaultBlockState();
+//        } else {
+//            return Blocks.LIME_WOOL.defaultBlockState();
+//        }
+        return CVBlockRegistry.CENTIPEDE_INNER_WALL.get().defaultBlockState();
     }
 }
