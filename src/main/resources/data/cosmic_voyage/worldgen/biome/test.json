@@ -26,7 +26,8 @@
   "features": [
     [
 	
-      "cosmic_voyage:venus_boulder"
+      "cosmic_voyage:venus_boulder",
+"cosmic_voyage:struct_feature_test"
 	],
     [],
     [],

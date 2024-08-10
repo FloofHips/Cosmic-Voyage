@@ -1,0 +1,8 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "ctm",
+    "layer": "SOLID",
+    "textures": ["cosmic_voyage:block/unshakable_metal_ctm"]
+  }
+}

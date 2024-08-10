@@ -99,6 +99,7 @@ public class CosmicVoyage
         CVChunkGeneratorRegistry.CHUNK_GENS.register(modEventBus);
         CVEntityRegistry.ENTITIES.register(modEventBus);
         CVFeatureRegistry.FEATURES.register(modEventBus);
+        CVPlacementModifierTypes.PLACEMENT_MODIFIERS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered

@@ -128,6 +128,12 @@ public class CVBlockRegistry {
             .strength(1.5F, 6.0F)
             .sound(SoundType.BASALT)
     );
+    public static final DeferredBlock<Block> UNSHAKABLE_METAL = registerBlock("unshakable_metal", Block::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
     private static <T extends Block> DeferredBlock<Block> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends T> func , BlockBehaviour.Properties props) {
         DeferredBlock<Block> toReturn = BLOCKS.registerBlock(name, func, props);
         CVItemRegistry.ITEMS.registerSimpleBlockItem(name, toReturn);

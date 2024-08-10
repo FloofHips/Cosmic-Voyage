@@ -1,4 +1,4 @@
-// 1.21	2024-08-03T03:18:29.6828506	Item Models: cosmic_voyage
+// 1.21	2024-08-04T03:13:11.0630182	Item Models: cosmic_voyage
 79c6ebc55ff054b98e101c7f08242d98c0d5fca1 assets/cosmic_voyage/models/item/centipede_inner_wall.json
 3853eaf3e7d0a11a491a25e2e35cae0e0f67e9b9 assets/cosmic_voyage/models/item/chunk_delimiter.json
 4655a8a4c696c8d2815eb5f6a54e8a199794760b assets/cosmic_voyage/models/item/computer.json
@@ -22,3 +22,4 @@ c5badf534c10debec2109665a5b6aae06e892717 assets/cosmic_voyage/models/item/ship_r
 36ef490bdd5ecd3247c848cd65e59a4476689bb8 assets/cosmic_voyage/models/item/tin.json
 c8179869464bd3db588121f38a1667f030218245 assets/cosmic_voyage/models/item/tin_door.json
 b0d7992c2bba94a859f3191d8f084ca0d984221d assets/cosmic_voyage/models/item/tin_stairs.json
+9b5a9ac6a8bbf1a47dbddea41f8d7f19ca5a87c1 assets/cosmic_voyage/models/item/unshakable_metal.json

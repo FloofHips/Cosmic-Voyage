@@ -1,0 +1,14 @@
+{
+  "feature": "cosmic_voyage:struct_feature_test",
+  "placement": [
+    {
+        "type": "cosmic_voyage:periodic_placement",
+        "x": 0,
+        "y": 201,
+        "offset": 10
+      },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
