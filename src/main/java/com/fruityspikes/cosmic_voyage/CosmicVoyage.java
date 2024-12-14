@@ -7,6 +7,7 @@ import com.fruityspikes.cosmic_voyage.data.CVBlockstateGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModelGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModels;
 import com.fruityspikes.cosmic_voyage.data.CVLangGen;
+import com.fruityspikes.cosmic_voyage.server.commands.ShipCommands;
 import com.fruityspikes.cosmic_voyage.server.registries.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -144,6 +145,9 @@ public class CosmicVoyage
     {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+        
+        // Register ship commands
+        ShipCommands.register(event.getServer().getCommands().getDispatcher());
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
