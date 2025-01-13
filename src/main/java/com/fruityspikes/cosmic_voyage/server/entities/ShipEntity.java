@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class ShipEntity extends Entity {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final EntityDataAccessor<String> SHIP_ID = SynchedEntityData.defineId(ShipEntity.class, EntityDataSerializers.STRING);
+    //private static final EntityDataAccessor<UUID> SHIP_ID = SynchedEntityData.defineId(ShipEntity.class, EntityDataSerializers.UU);
 
     public ShipEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -34,31 +34,30 @@ public class ShipEntity extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {  // Changed from defineSynchedData(Builder)
-        this.entityData.set(SHIP_ID, "");  // Changed to use entityData directly
+          // Changed to use entityData directly
     }
 
     public UUID getShipId() {
-        String idString = this.entityData.get(SHIP_ID);
-        return idString.isEmpty() ? null : UUID.fromString(idString);
+        return this.getUUID();
     }
 
     public void setShipId(UUID id) {
-        this.entityData.set(SHIP_ID, id.toString());
+        this.setUUID(id);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        if (compound.contains("ShipId")) {
-            setShipId(compound.getUUID("ShipId"));
-        }
+//        if (compound.contains("ShipId")) {
+//            setShipId(compound.getUUID("ShipId"));
+//        }
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        UUID shipId = getShipId();
-        if (shipId != null) {
-            compound.putUUID("ShipId", shipId);
-        }
+//        UUID shipId = getShipId();
+//        if (shipId != null) {
+//            compound.putUUID("ShipId", shipId);
+//        }
     }
 
     @Override
@@ -74,33 +73,29 @@ public class ShipEntity extends Entity {
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
         if (!this.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
-            UUID shipId = getShipId();
-            if (shipId == null) {
-                LOGGER.error("Ship entity {} has no associated ship ID!", this);
+            UUID shipId = this.getUUID();  // Use built-in UUID
+            ServerLevel level = (ServerLevel) this.level();
+            SpaceshipManager manager = SpaceshipManager.get(level);
+
+            if (manager == null) {
+                LOGGER.error("SpaceshipManager not available for level {}", level);
                 return InteractionResult.FAIL;
             }
 
-            ServerLevel level = (ServerLevel) this.level();
-            SpaceshipManager manager = SpaceshipManager.get(level);
-            Ship ship = manager.getShip(shipId);
-
+            Ship ship = manager.getShip(shipId);  // Retrieve ship using entity's UUID
             if (ship == null) {
                 LOGGER.error("Could not find ship with ID {} for entity {}", shipId, this);
                 return InteractionResult.FAIL;
             }
 
-            // Update ship entity location in case it moved
             ship.setEntityLocation(this.blockPosition());
-            
-            // Play interaction effect
-            playInteractionEffect(level);
-
-            // Teleport player to ship
+            //playInteractionEffect(level);
             TeleportUtil.teleportToShip(serverPlayer, ship, level);
             return InteractionResult.CONSUME;
         }
         return InteractionResult.SUCCESS;
     }
+
 
     private void playInteractionEffect(ServerLevel level) {
         Vec3 pos = this.position();

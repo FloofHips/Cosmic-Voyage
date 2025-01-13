@@ -1,13 +1,17 @@
 package com.fruityspikes.cosmic_voyage.server.ships;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
+import com.fruityspikes.cosmic_voyage.server.dimension.SpaceshipDimension;
 import com.fruityspikes.cosmic_voyage.server.entities.ShipEntity;
 import com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
+import net.minecraft.util.Unit;
 import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.core.BlockPos;
 import org.slf4j.Logger;
@@ -76,7 +80,18 @@ public class SpaceshipManager extends SavedData {
         shipEntity.setPos(entityLocation.getX() + 0.5, entityLocation.getY(), entityLocation.getZ() + 0.5);
         shipEntity.setShipId(shipId);
         level.addFreshEntity(shipEntity);
-        
+
+        // Initialize the structure at the ship's position
+        ServerLevel spaceshipDimension = level.getServer().getLevel(SpaceshipDimension.DIMENSION_KEY);
+        if (spaceshipDimension != null) {
+            ChunkPos chunkPos = new ChunkPos(shipDimensionPos);  // Convert BlockPos to ChunkPos
+            spaceshipDimension.getChunkSource().addRegionTicket(TicketType.START, chunkPos, 1, Unit.INSTANCE);  // Use Unit.INSTANCE as the value
+            ship.initializeStructure(spaceshipDimension);
+        } else {
+            LOGGER.error("Spaceship dimension is not available!");
+        }
+
+
         // Update next available position and simple ID
         updateNextShipPosition();
         nextSimpleId++;
