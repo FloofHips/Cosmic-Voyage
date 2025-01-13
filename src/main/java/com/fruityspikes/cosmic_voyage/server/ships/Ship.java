@@ -86,18 +86,18 @@ public class Ship {
          StructureTemplateManager templateManager = level.getServer().getStructureManager();
          StructureTemplate template = templateManager.getOrCreate(structureLocation);
 
-         BlockPos startPosition = dimensionLocation.offset(0, -3, -1);
+         BlockPos startPosition = dimensionLocation.offset(-1, -34, -1);
          StructurePlaceSettings settings = new StructurePlaceSettings() // Adjust settings as needed
-                 .setRotation(Rotation.NONE) // Optionally rotate
-                 .setMirror(Mirror.FRONT_BACK);;
+                 .setRotation(Rotation.NONE);
+         template.placeInWorld(level, startPosition, startPosition, settings, level.random, 2);
 
-         if (template != null) {
-             template.placeInWorld(level, startPosition, startPosition, settings, level.random, 2);
-             System.out.println("Ship room created at: " + startPosition);
-         } else {
-             System.out.println("Failed to load structure: " + structureLocation);
-         }
+        for (int y = 0; y < 4; y++) {
+            for (int z = 0; z < 4; z++) {
+                for (int x = 0; x < 12; x++) {
 
-        System.out.println("Wool floor created at: " + startPosition);
+                    level.setBlock(startPosition.offset(x+17,y+7,z+7), Blocks.AIR.defaultBlockState(), 20);
+                }
+            }
+        }
     }
 }

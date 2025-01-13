@@ -15,7 +15,12 @@ public class CVEntityRegistry {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, CosmicVoyage.MODID);
 
     //Vehicles
-    public static final DeferredHolder<EntityType<?>, EntityType<ShipEntity>> SHIP = ENTITIES.register("ship", () -> EntityType.Builder.of(ShipEntity::new, MobCategory.MISC).sized(3,6).build(ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "ship").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<ShipEntity>> SHIP =
+            ENTITIES.register("ship", () -> EntityType.Builder
+                    .of(ShipEntity::new, MobCategory.MISC)
+                    .sized(3,6)
+                    .build(ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "ship")
+                            .toString()));
 
     @SubscribeEvent
     public static void entityAttributes(EntityAttributeCreationEvent event) {

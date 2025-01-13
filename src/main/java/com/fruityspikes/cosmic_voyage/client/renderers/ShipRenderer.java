@@ -31,7 +31,7 @@ public class ShipRenderer extends EntityRenderer<ShipEntity> {
     @Override
     public void render(ShipEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
-        poseStack.translate(0.0D, 0.5D, 0.0D);
+        poseStack.translate(0.0D, 1.5D, 0.0D);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         this.model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity))), packedLight, OverlayTexture.NO_OVERLAY, -1);
         poseStack.popPose();
