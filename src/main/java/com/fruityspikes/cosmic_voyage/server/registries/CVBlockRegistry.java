@@ -2,10 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.registries;
 
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
-import com.fruityspikes.cosmic_voyage.server.blocks.ComputerBlock;
-import com.fruityspikes.cosmic_voyage.server.blocks.LampuleBlock;
-import com.fruityspikes.cosmic_voyage.server.blocks.OutletBlock;
-import com.fruityspikes.cosmic_voyage.server.blocks.ShipRoomGateBlock;
+import com.fruityspikes.cosmic_voyage.server.blocks.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -84,7 +81,12 @@ public class CVBlockRegistry {
             .strength(1.5F, 6.0F)
             .sound(SoundType.NETHERITE_BLOCK)
     );
-
+    public static final DeferredBlock<Block> SHIP_EXIT = registerBlock("ship_exit", ShipExitBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
     //Venus
     public static final DeferredBlock<Block> SEDIMENT = registerBlock("sediment", Block::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)

@@ -13,6 +13,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.awt.*;
+
 public class ShipCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("ship")
@@ -116,12 +118,12 @@ public class ShipCommands {
         }
 
         ServerLevel level = source.getLevel();
+
         if (!level.dimension().equals(SpaceshipDimension.DIMENSION_KEY)) {
             source.sendFailure(Component.literal("You must be in a ship to use this command"));
             return 0;
         }
 
-        // Find the ship the player is in based on their position
         SpaceshipManager manager = SpaceshipManager.get(level);
         Ship ship = findShipAtPosition(manager, player.blockPosition());
 
@@ -135,10 +137,14 @@ public class ShipCommands {
         return 1;
     }
 
-    private static Ship findShipAtPosition(SpaceshipManager manager, BlockPos pos) {
+    public static Ship findShipAtPosition(SpaceshipManager manager, BlockPos pos) {
         // Ships are spaced 1000 blocks apart, so we can determine which ship area we're in
         int shipX = Math.floorDiv(pos.getX(), 1000) * 1000;
         int shipZ = Math.floorDiv(pos.getZ(), 1000) * 1000;
+
+        if (manager.getShips().isEmpty()) {
+            System.out.println("No ships exist");
+        }
 
         for (Ship ship : manager.getShips().values()) {
             BlockPos shipPos = ship.getDimensionLocation();

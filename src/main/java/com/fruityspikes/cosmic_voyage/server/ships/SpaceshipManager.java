@@ -7,6 +7,7 @@ import com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.util.Unit;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SpaceshipManager extends SavedData {
+    private static SpaceshipManager instance;
     private static final String SAVED_DATA_NAME = CosmicVoyage.MODID + "_spaceships";
     private static final Logger LOGGER = LogUtils.getLogger();
     
@@ -55,16 +57,28 @@ public class SpaceshipManager extends SavedData {
     }
 
     public static SpaceshipManager get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
-            new SavedData.Factory<>(
-                () -> new SpaceshipManager(),
-                (tag, provider) -> SpaceshipManager.load(tag),
-                DataFixTypes.LEVEL
-            ),
-            SAVED_DATA_NAME
-        );
+        if (instance == null) {
+            MinecraftServer server = level.getServer();
+            ServerLevel overworld = server.overworld();
+            instance = overworld.getDataStorage().computeIfAbsent(
+                    new SavedData.Factory<>(
+                            SpaceshipManager::new,
+                            (tag, provider) -> SpaceshipManager.load(tag),
+                            DataFixTypes.LEVEL
+                    ),
+                    SAVED_DATA_NAME
+            );
+        }
+        return instance;
     }
 
+    public static SpaceshipManager getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("SpaceshipManager has not been initialized!");
+        }
+        return instance;
+    }
+    
     public Ship createShip(BlockPos entityLocation, ServerLevel level) {
         // Calculate next available position in spaceship dimension
         BlockPos shipDimensionPos = new BlockPos(nextShipDimensionX, 64, nextShipDimensionZ);
@@ -74,14 +88,13 @@ public class SpaceshipManager extends SavedData {
         Ship ship = new Ship(shipId, nextSimpleId, entityLocation, shipDimensionPos);
         ships.put(shipId, ship);
         simpleIdToUuid.put(nextSimpleId, shipId);
-        
+
         // Create ship entity
         ShipEntity shipEntity = new ShipEntity(CVEntityRegistry.SHIP.get(), level);
         shipEntity.setPos(entityLocation.getX() + 0.5, entityLocation.getY(), entityLocation.getZ() + 0.5);
         shipEntity.setShipId(shipId);
         level.addFreshEntity(shipEntity);
 
-        // Initialize the structure at the ship's position
         ServerLevel spaceshipDimension = level.getServer().getLevel(SpaceshipDimension.DIMENSION_KEY);
         if (spaceshipDimension != null) {
             ChunkPos chunkPos = new ChunkPos(shipDimensionPos);  // Convert BlockPos to ChunkPos
@@ -91,12 +104,9 @@ public class SpaceshipManager extends SavedData {
             LOGGER.error("Spaceship dimension is not available!");
         }
 
-
-        // Update next available position and simple ID
         updateNextShipPosition();
         nextSimpleId++;
-        
-        // Mark data as dirty to ensure it's saved
+
         this.setDirty();
         
         LOGGER.info("Created new ship with ID: {} (#{}) at dimension position: {}", shipId, ship.getSimpleId(), shipDimensionPos);

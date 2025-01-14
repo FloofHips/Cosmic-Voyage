@@ -32,7 +32,7 @@ public class TeleportUtil {
         // Teleport player to ship
         Vec3 targetPos = Vec3.atBottomCenterOf(ship.getDimensionLocation());
         player.teleportTo(shipDimension, 
-            targetPos.x+28, targetPos.y-28, targetPos.z+8.5,
+            targetPos.x+25, targetPos.y-26, targetPos.z+8.5,
             90, 0);
 
         // Play arrival effects (in the ship dimension)
