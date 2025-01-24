@@ -1,4 +1,4 @@
-// 1.21	2024-08-04T03:26:42.0116985	Block States: cosmic_voyage
+// 1.21	2025-01-19T03:14:10.5418365	Block States: cosmic_voyage
 d85ec4b6e9043c4a06def686f7c2f66b2add358d assets/cosmic_voyage/blockstates/concrete.json
 f4baffb0e06a0f14c513609c6358ca6a9a5f0c79 assets/cosmic_voyage/blockstates/dark_sulfur_deposit.json
 fd341a21851383e3951a0907fe6c0282475f29f8 assets/cosmic_voyage/blockstates/duralumin_pillar.json
@@ -9,6 +9,7 @@ a348fd8450c03c2e7e3f04518a0e0e0787040902 assets/cosmic_voyage/blockstates/epoxy_
 007a4f2db4520b4b97cc95dc654be37684992b11 assets/cosmic_voyage/blockstates/hull_block.json
 e8394a4e753079f806afbd00855a6786d14ea70b assets/cosmic_voyage/blockstates/reinforced_epoxy_pillar.json
 90f673d035e5e0424b8e956e8e1eeb8288bd1e58 assets/cosmic_voyage/blockstates/sediment.json
+82ad208ce0602f1ee14b1f0575854363fd352238 assets/cosmic_voyage/blockstates/ship_light_switch.json
 4942d695f946d758e7222c9681e0b4c2caccd2e7 assets/cosmic_voyage/blockstates/sulfur_deposit.json
 bc38c439250756f5bb84ee22839dc53218e1110d assets/cosmic_voyage/blockstates/tin.json
 6999214a0177c669073a7ffac530cc1f16e48f9f assets/cosmic_voyage/blockstates/tin_door.json

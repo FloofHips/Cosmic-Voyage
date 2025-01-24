@@ -3,12 +3,18 @@ package com.fruityspikes.cosmic_voyage.server.util;
 import com.fruityspikes.cosmic_voyage.server.dimension.SpaceshipDimension;
 import com.fruityspikes.cosmic_voyage.server.ships.Ship;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
@@ -47,7 +53,7 @@ public class TeleportUtil {
         }
 
         // Play departure effects
-        playTeleportEffects(shipDimension, player.position(), true);
+        //playTeleportEffects(shipDimension, player.position(), true);
         
         // Teleport back to overworld
         player.teleportTo(overworld,
@@ -55,10 +61,24 @@ public class TeleportUtil {
             player.getYRot(), player.getXRot());
 
         // Play arrival effects
-        playTeleportEffects(overworld, returnPos, false);
+        //playTeleportEffects(overworld, returnPos, false);
 
         // Clear return position
         clearReturnPosition(player, ship);
+    }
+
+    public static void exitShip(ServerPlayer player, Ship ship, ServerLevel shipDimension) {
+        MinecraftServer server = shipDimension.getServer();
+        BlockPos returnPos = ship.getEntityLocation();
+        ResourceLocation dimensionRL = ship.getDimension();
+
+        ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, dimensionRL);
+        ServerLevel targetDim = server.getLevel(dimensionKey);
+
+        if(targetDim!=null)
+            player.teleportTo(targetDim,
+                returnPos.getX(), returnPos.getY(), returnPos.getZ(),
+                player.getYRot(), player.getXRot());
     }
 
     private static void playTeleportEffects(ServerLevel level, Vec3 pos, boolean isDeparture) {

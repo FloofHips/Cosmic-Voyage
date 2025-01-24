@@ -3,7 +3,9 @@ package com.fruityspikes.cosmic_voyage.server.ships;
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -22,12 +24,14 @@ public class Ship {
     private final int simpleId;
     private BlockPos entityLocation;
     private final BlockPos dimensionLocation;
+    private ResourceLocation dimension;
 
-    public Ship(UUID id, int simpleId, BlockPos entityLocation, BlockPos dimensionLocation) {
+    public Ship(UUID id, int simpleId, BlockPos entityLocation, BlockPos dimensionLocation, ResourceLocation dimension) {
         this.id = id;
         this.simpleId = simpleId;
         this.entityLocation = entityLocation;
         this.dimensionLocation = dimensionLocation;
+        this.dimension = dimension;
     }
 
     public UUID getId() {
@@ -50,6 +54,14 @@ public class Ship {
         return dimensionLocation;
     }
 
+    public ResourceLocation getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(ResourceLocation dimension) {
+        this.dimension = dimension;
+    }
+
     public void save(CompoundTag tag) {
         tag.putUUID("id", id);
         tag.putInt("simpleId", simpleId);
@@ -59,6 +71,7 @@ public class Ship {
         tag.putInt("dimensionX", dimensionLocation.getX());
         tag.putInt("dimensionY", dimensionLocation.getY());
         tag.putInt("dimensionZ", dimensionLocation.getZ());
+        tag.putString("dimension", dimension.toString());
     }
 
     public static Ship load(CompoundTag tag) {
@@ -74,7 +87,8 @@ public class Ship {
             tag.getInt("dimensionY"),
             tag.getInt("dimensionZ")
         );
-        return new Ship(id, simpleId, entityLocation, dimensionLocation);
+        ResourceLocation dimension = ResourceLocation.tryParse(tag.getString("dimension"));
+        return new Ship(id, simpleId, entityLocation, dimensionLocation, dimension);
     }
 
     // Get the spawn position inside the ship (center of the 3x3 chunk area)

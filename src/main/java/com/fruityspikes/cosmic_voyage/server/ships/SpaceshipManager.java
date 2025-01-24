@@ -7,9 +7,11 @@ import com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Unit;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
@@ -80,16 +82,14 @@ public class SpaceshipManager extends SavedData {
     }
     
     public Ship createShip(BlockPos entityLocation, ServerLevel level) {
-        // Calculate next available position in spaceship dimension
         BlockPos shipDimensionPos = new BlockPos(nextShipDimensionX, 64, nextShipDimensionZ);
-        
-        // Create new ship with unique ID and simple ID
+        ResourceLocation dimension = ResourceLocation.parse(level.dimension().location().toString());
+        System.out.println(dimension);
         UUID shipId = UUID.randomUUID();
-        Ship ship = new Ship(shipId, nextSimpleId, entityLocation, shipDimensionPos);
+        Ship ship = new Ship(shipId, nextSimpleId, entityLocation, shipDimensionPos, dimension);
         ships.put(shipId, ship);
         simpleIdToUuid.put(nextSimpleId, shipId);
 
-        // Create ship entity
         ShipEntity shipEntity = new ShipEntity(CVEntityRegistry.SHIP.get(), level);
         shipEntity.setPos(entityLocation.getX() + 0.5, entityLocation.getY(), entityLocation.getZ() + 0.5);
         shipEntity.setShipId(shipId);

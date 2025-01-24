@@ -23,6 +23,7 @@ public class CVBlockRegistry {
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
             .sound(SoundType.COPPER_BULB)
+            .noOcclusion()
     );
     public static final DeferredBlock<Block> OUTLET = registerBlock("outlet", OutletBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
@@ -82,6 +83,18 @@ public class CVBlockRegistry {
             .sound(SoundType.NETHERITE_BLOCK)
     );
     public static final DeferredBlock<Block> SHIP_EXIT = registerBlock("ship_exit", ShipExitBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
+    public static final DeferredBlock<Block> SHIP_LIGHT_SWITCH = registerBlock("ship_light_switch", ShipLightSwitchBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
+    public static final DeferredBlock<Block> HELM = registerBlock("helm", Block::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)

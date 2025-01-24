@@ -36,6 +36,7 @@ public class CVBlockstateGen extends BlockStateProvider {
         basicBlock(CVBlockRegistry.TIN);
         basicBlock(CVBlockRegistry.CONCRETE);
         basicBlock(CVBlockRegistry.UNSHAKABLE_METAL);
+        customBlock(CVBlockRegistry.SHIP_LIGHT_SWITCH);
         doorBlockWithRenderType((DoorBlock) CVBlockRegistry.TIN_DOOR.get(), ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/tin_door_bottom"), ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/tin_door_top"), "minecraft:cutout");
 
         DataHelper.takeAll(blocks, b -> b.get() instanceof RotatedPillarBlock).forEach(this::rotatedPillarBlock);

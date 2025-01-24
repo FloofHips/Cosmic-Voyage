@@ -34,7 +34,7 @@ public class ShipExitBlock extends Block implements Portal {
         if(pLevel instanceof ServerLevel serverLevel && pEntity instanceof ServerPlayer player){
             manager = SpaceshipManager.get(serverLevel);
             Ship ship = ShipCommands.findShipAtPosition(manager, pEntity.blockPosition());
-            TeleportUtil.teleportFromShip(player, ship, serverLevel);
+            TeleportUtil.exitShip(player, ship, serverLevel);
         }
     }
 
