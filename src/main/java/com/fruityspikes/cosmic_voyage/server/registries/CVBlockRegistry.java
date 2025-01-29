@@ -76,6 +76,12 @@ public class CVBlockRegistry {
             .strength(1.5F, 6.0F)
             .sound(SoundType.NETHERITE_BLOCK)
     );
+    public static final DeferredBlock<Block> GRIDLIGHT = registerBlock("gridlight", ShipLightBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+    );
     public static final DeferredBlock<Block> SHIP_ROOM_GATE = registerBlock("ship_room_gate", ShipRoomGateBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()

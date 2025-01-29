@@ -1,0 +1,13 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "ctm",
+    "layer": "SOLID",
+    "textures": ["cosmic_voyage:block/gridlight_ctm"],
+"extra": {
+            "connect_to": [
+                { "block": "cosmic_voyage:gridlight" }
+            ]
+        }
+  }
+}

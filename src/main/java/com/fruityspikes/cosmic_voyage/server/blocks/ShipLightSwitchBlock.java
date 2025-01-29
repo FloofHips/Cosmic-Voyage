@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -22,45 +23,42 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
-public class ShipLightSwitchBlock extends LeverBlock {
+public class ShipLightSwitchBlock extends HorizontalDirectionalBlock {
+    public static final MapCodec<ShipLightSwitchBlock> CODEC = simpleCodec(ShipLightSwitchBlock::new);
+    public static final BooleanProperty UP = BooleanProperty.create("up");
     public ShipLightSwitchBlock(Properties p_54633_) {
         super(p_54633_);
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(UP, false)));
     }
-//    public static final MapCodec<ShipLightSwitchBlock> CODEC = simpleCodec(ShipLightSwitchBlock::new);
-//    public static BooleanProperty UP;
-//    public ShipLightSwitchBlock(Properties pProperties) {
-//        super(pProperties);
-//        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(UP, false)).setValue(FACE, AttachFace.WALL));
-//
-//    }
-//
-//    @Override
-//    protected MapCodec<? extends FaceAttachedHorizontalDirectionalBlock> codec() {
-//        return null;
-//    }
-//
-//    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
-//        if (!pLevel.isClientSide) {
-//            BlockState blockstate = (BlockState)pState.cycle(UP);
-//            this.pull(pState, pLevel, pPos, (Player)null);
-//        }
-//        return InteractionResult.CONSUME;
-//    }
-//
-//    public void pull(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
-//        BlockState blockstate = (BlockState)pState.cycle(UP);
-//        pLevel.setBlock(pPos, pState, 3);
-//        //Ship
-//        playSound(pPlayer, pLevel, pPos, pState);
-//        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
-//    }
-//
-//    protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
-//        float f = (Boolean)pState.getValue(UP) ? 0.6F : 0.5F;
-//        pLevel.playSound(pPlayer, pPos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
-//    }
-//
-//    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-//        pBuilder.add(new Property[]{FACE, FACING, UP});
-//    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return null;
+    }
+
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        if (pLevel.isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            this.pull(pState.cycle(UP), pLevel, pPos, (Player)null);
+            return InteractionResult.CONSUME;
+        }
+    }
+
+    public void pull(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+        BlockState blockstate = (BlockState)pState.cycle(UP);
+        pLevel.setBlock(pPos, pState, 3);
+        //Ship
+        playSound(pPlayer, pLevel, pPos, pState);
+        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
+    }
+
+    protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
+        float f = (Boolean)pState.getValue(UP) ? 1.0F : 1.5F;
+        pLevel.playSound(pPlayer, pPos, SoundEvents.TRIPWIRE_ATTACH, SoundSource.BLOCKS, 0.3F, f);
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+        pBuilder.add(new Property[]{FACING, UP});
+    }
 }

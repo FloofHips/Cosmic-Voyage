@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "cosmic_voyage:block/gridlight"
+    },
+    "lit=true": {
+      "model": "cosmic_voyage:block/gridlight_on"
+    }
+  }
+}

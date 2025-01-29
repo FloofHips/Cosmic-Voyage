@@ -1,21 +1,23 @@
 {
 	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
 	"texture_size": [32, 32],
 	"textures": {
 		"0": "cosmic_voyage:block/ship_light_switch",
-		"particle": "cosmic_voyage:block/ship_light_switch"
+		"1": "cosmic_voyage:block/hull_block",
+		"particle": "cosmic_voyage:block/hull_block"
 	},
 	"elements": [
 		{
 			"from": [0, 0, 0],
 			"to": [16, 16, 16],
 			"faces": {
-				"north": {"uv": [8, 8, 16, 16], "texture": "#0"},
-				"east": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"south": {"uv": [8, 8, 16, 16], "texture": "#0"},
-				"west": {"uv": [0, 8, 8, 16], "texture": "#0"},
-				"up": {"uv": [0, 0, 8, 8], "texture": "#0"},
-				"down": {"uv": [0, 8, 8, 16], "texture": "#0"}
+				"north": {"uv": [8, 8, 16, 16], "texture": "#0", "cullface": "north"},
+				"east": {"uv": [0, 8, 8, 16], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [8, 8, 16, 16], "texture": "#0", "cullface": "south"},
+				"west": {"uv": [0, 8, 8, 16], "texture": "#0", "cullface": "west"},
+				"up": {"uv": [0, 0, 8, 8], "texture": "#0", "cullface": "up"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#1", "cullface": "down"}
 			}
 		},
 		{
@@ -23,12 +25,12 @@
 			"to": [11, 17.13777, 14.04566],
 			"rotation": {"angle": -22.5, "axis": "x", "origin": [8, 15.63777, 11.04566]},
 			"faces": {
-				"north": {"uv": [8, 2.5, 11, 4], "texture": "#0"},
-				"east": {"uv": [14, 4, 15.5, 7], "rotation": 90, "texture": "#0"},
-				"south": {"uv": [11, 2.5, 14, 4], "texture": "#0"},
-				"west": {"uv": [14, 4, 15.5, 7], "rotation": 90, "texture": "#0"},
-				"up": {"uv": [11, 4, 14, 7], "texture": "#0"},
-				"down": {"uv": [11, 4, 14, 7], "texture": "#0"}
+				"north": {"uv": [8, 2.5, 11, 4], "texture": "#0", "cullface": "up"},
+				"east": {"uv": [14, 4, 15.5, 7], "rotation": 90, "texture": "#0", "cullface": "up"},
+				"south": {"uv": [11, 2.5, 14, 4], "texture": "#0", "cullface": "up"},
+				"west": {"uv": [14, 4, 15.5, 7], "rotation": 90, "texture": "#0", "cullface": "up"},
+				"up": {"uv": [11, 4, 14, 7], "texture": "#0", "cullface": "up"},
+				"down": {"uv": [11, 4, 14, 7], "texture": "#0", "cullface": "up"}
 			}
 		}
 	],

@@ -1,4 +1,4 @@
-// 1.21	2025-01-19T03:12:08.7658713	Item Models: cosmic_voyage
+// 1.21	2025-01-28T18:32:36.1648155	Item Models: cosmic_voyage
 79c6ebc55ff054b98e101c7f08242d98c0d5fca1 assets/cosmic_voyage/models/item/centipede_inner_wall.json
 3853eaf3e7d0a11a491a25e2e35cae0e0f67e9b9 assets/cosmic_voyage/models/item/chunk_delimiter.json
 4655a8a4c696c8d2815eb5f6a54e8a199794760b assets/cosmic_voyage/models/item/computer.json
@@ -10,6 +10,8 @@ bf1f57cd308af649d2c19218b9d27bad686267c7 assets/cosmic_voyage/models/item/epoxy.
 7f96c9cdcdceb617fe76ac99bd2d21cc1caf05de assets/cosmic_voyage/models/item/epoxy_pillar.json
 ff533a9e5065feba2663120b69c16e0353754128 assets/cosmic_voyage/models/item/epoxy_slab.json
 8b9e0a0bae037c904f73bd0cddda7a12ade1a774 assets/cosmic_voyage/models/item/epoxy_stairs.json
+f447496dace19f57fce98dac9f306ec57ff696e1 assets/cosmic_voyage/models/item/gridlight.json
+46ef75dbde20281d1ac06e55c4bd5a81a4883dd0 assets/cosmic_voyage/models/item/helm.json
 7b4e567980cb7e348b745940a1feaa556bfb76b9 assets/cosmic_voyage/models/item/hull_block.json
 0e4267c4e3e01bfd2a419efa2ee93200ceeaa82d assets/cosmic_voyage/models/item/lampule.json
 f243730f5afa4a7e240a504bb538be69c6fe6d3b assets/cosmic_voyage/models/item/outlet.json
