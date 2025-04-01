@@ -2,9 +2,7 @@
   "type": "cosmic_voyage:structure_feature",
   "config": {
     "structures": [
-      "minecraft:village/desert/houses/desert_small_house_1",
-      "minecraft:village/desert/houses/desert_small_house_2",
-      "minecraft:village/desert/houses/desert_small_house_3"
+      "cosmic_voyage:centipede_shell"
     ],
     "processors": "minecraft:empty"
   }

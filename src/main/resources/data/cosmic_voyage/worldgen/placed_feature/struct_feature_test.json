@@ -3,9 +3,9 @@
   "placement": [
     {
         "type": "cosmic_voyage:periodic_placement",
-        "x": 0,
-        "y": 201,
-        "offset": 10
+        "x": 10,
+        "y": 96,
+        "spacing": 3
       },
     {
       "type": "minecraft:biome"

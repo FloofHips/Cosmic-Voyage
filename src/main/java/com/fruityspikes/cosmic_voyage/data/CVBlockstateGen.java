@@ -30,7 +30,7 @@ public class CVBlockstateGen extends BlockStateProvider {
 
         basicBlock(CVBlockRegistry.HULL_BLOCK);
         basicBlock(CVBlockRegistry.EPOXY);
-        basicBlock(CVBlockRegistry.SEDIMENT);
+        //basicBlock(CVBlockRegistry.SEDIMENT);
         basicBlock(CVBlockRegistry.SULFUR_DEPOSIT);
         basicBlock(CVBlockRegistry.DARK_SULFUR_DEPOSIT);
         basicBlock(CVBlockRegistry.TIN);

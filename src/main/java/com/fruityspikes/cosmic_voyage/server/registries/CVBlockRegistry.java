@@ -12,6 +12,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.nio.file.Path;
 import java.util.function.Function;
 import java.util.function.Supplier;
 public class CVBlockRegistry {
@@ -105,9 +106,16 @@ public class CVBlockRegistry {
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
             .sound(SoundType.NETHERITE_BLOCK)
+
     );
     //Venus
     public static final DeferredBlock<Block> SEDIMENT = registerBlock("sediment", Block::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERRACK)
+    );
+    public static final DeferredBlock<Block> ERODED_SEDIMENT = registerBlock("eroded_sediment", PathBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
