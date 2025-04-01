@@ -1,8 +1,7 @@
 package com.fruityspikes.cosmic_voyage.server.registries;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
-import com.fruityspikes.cosmic_voyage.server.items.ChunkDelimiterItem;
-import com.fruityspikes.cosmic_voyage.server.items.PlatformPlacerItem;
+import com.fruityspikes.cosmic_voyage.server.items.*;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -14,6 +13,9 @@ public class CVItemRegistry {
             .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
     public static final DeferredItem<ChunkDelimiterItem> CHUNK_DELIMITER = ITEMS.register("chunk_delimiter", () -> new ChunkDelimiterItem(new Item.Properties()));
     public static final DeferredItem<PlatformPlacerItem> PLATFORM_PLACER = ITEMS.register("platform_placer", () -> new PlatformPlacerItem(new Item.Properties()));
+    public static final DeferredItem<FillerItem> FILLER = ITEMS.register("filler", () -> new FillerItem(new Item.Properties()));
+    public static final DeferredItem<HollowFillerItem> HOLLOW_FILLER = ITEMS.register("hollow_filler", () -> new HollowFillerItem(new Item.Properties()));
+    public static final DeferredItem<LinerItem> LINER = ITEMS.register("liner", () -> new LinerItem(new Item.Properties()));
     public static final DeferredItem<Item> ROOM_UPGRADE = ITEMS.registerSimpleItem("room_upgrade", new Item.Properties());
 
     public static void creativeTabBuild(CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output) {

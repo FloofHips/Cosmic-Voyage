@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "cosmic_voyage:block/plexiglass",
+    "side": "cosmic_voyage:block/plexiglass",
+    "top": "cosmic_voyage:block/plexiglass"
+  }
+}

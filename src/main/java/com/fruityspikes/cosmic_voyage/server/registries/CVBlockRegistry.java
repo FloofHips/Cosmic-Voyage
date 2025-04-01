@@ -3,6 +3,7 @@ package com.fruityspikes.cosmic_voyage.server.registries;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.blocks.*;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -83,6 +84,18 @@ public class CVBlockRegistry {
             .strength(1.5F, 6.0F)
             .sound(SoundType.NETHERITE_BLOCK)
     );
+    public static final DeferredBlock<Block> PLEXIGLASS = registerSpecial("plexiglass", () -> new StainedGlassBlock(DyeColor.YELLOW, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.COPPER_GRATE).noOcclusion()
+    ));
+    public static final DeferredBlock<Block> PLEXIGLASS_SLAB = registerBlock("plexiglass_slab", SlabBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.COPPER_BULB)
+    );
     public static final DeferredBlock<Block> SHIP_ROOM_GATE = registerBlock("ship_room_gate", ShipRoomGateBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
@@ -109,6 +122,12 @@ public class CVBlockRegistry {
 
     );
     //Venus
+    public static final DeferredBlock<Block> ACID_STILL = registerBlock("acid_still", AcidBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.SLIME_BLOCK)
+    );
     public static final DeferredBlock<Block> SEDIMENT = registerBlock("sediment", Block::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()

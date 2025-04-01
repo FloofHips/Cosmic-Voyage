@@ -1,4 +1,5 @@
 {
+  "block.cosmic_voyage.acid_still": "Acid Still",
   "block.cosmic_voyage.centipede_inner_wall": "Centipede Inner Wall",
   "block.cosmic_voyage.computer": "Computer",
   "block.cosmic_voyage.concrete": "Concrete",
@@ -14,6 +15,8 @@
   "block.cosmic_voyage.hull_block": "Hull Block",
   "block.cosmic_voyage.lampule": "Lampule",
   "block.cosmic_voyage.outlet": "Outlet",
+  "block.cosmic_voyage.plexiglass": "Plexiglass",
+  "block.cosmic_voyage.plexiglass_slab": "Plexiglass Slab",
   "block.cosmic_voyage.reinforced_epoxy_pillar": "Reinforced Epoxy Pillar",
   "block.cosmic_voyage.sediment": "Sediment",
   "block.cosmic_voyage.ship_exit": "Ship Exit",
@@ -26,6 +29,9 @@
   "block.cosmic_voyage.unshakable_metal": "Unshakable Metal",
   "item.cosmic_voyage.chunk_delimiter": "Chunk Delimiter",
   "item.cosmic_voyage.cosmic_test": "Cosmic Test",
+  "item.cosmic_voyage.filler": "Filler",
+  "item.cosmic_voyage.hollow_filler": "Hollow Filler",
+  "item.cosmic_voyage.liner": "Liner",
   "item.cosmic_voyage.platform_placer": "Platform Placer",
   "item.cosmic_voyage.room_upgrade": "Room Upgrade"
 }

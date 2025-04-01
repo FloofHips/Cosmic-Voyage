@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "cosmic_voyage:block/plexiglass_slab"
+    },
+    "type=double": {
+      "model": "cosmic_voyage:block/plexiglass"
+    },
+    "type=top": {
+      "model": "cosmic_voyage:block/plexiglass_slab_top"
+    }
+  }
+}
