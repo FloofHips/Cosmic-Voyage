@@ -18,5 +18,4 @@ public class AcidFluid extends BaseFlowingFluid {
         return 0;
     }
 
-
 }

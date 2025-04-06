@@ -114,7 +114,6 @@ public class CosmicVoyage
         CVBlockRegistry.registerFluids();
         CVFluidRegistry.registerAcidTypes();
         CVFluidRegistry.registerAcids();
-        CVItemRegistry.registerBuckets();
 
         modEventBus.addListener(this::gatherData);
         // Register ourselves for server and other game events we are interested in.

@@ -28,7 +28,7 @@ public class CVItemRegistry {
     public static final DeferredItem<HollowFillerItem> HOLLOW_FILLER = ITEMS.register("hollow_filler", () -> new HollowFillerItem(new Item.Properties()));
     public static final DeferredItem<LinerItem> LINER = ITEMS.register("liner", () -> new LinerItem(new Item.Properties()));
     public static final DeferredItem<Item> ROOM_UPGRADE = ITEMS.registerSimpleItem("room_upgrade", new Item.Properties());
-    //public static final DeferredItem<Item> ACID_BUCKET = ITEMS.registerItem("acid_bucket", props -> new BucketItem(CVFluidRegistry.ACID_FLUIDS_STILL.get("yellow").get(), props.craftRemainder(Items.BUCKET).stacksTo(1)));
+    public static final DeferredItem<Item> ACID_BUCKET = ITEMS.registerItem("acid_bucket", props -> new AcidBucketItem(CVFluidRegistry.ACID_FLUIDS_STILL.get("green").get(), props.craftRemainder(Items.BUCKET).stacksTo(1)));
 
     public static final Map<String, DeferredHolder<Item, BucketItem>> ACID_BUCKETS = new HashMap<>();
 
@@ -37,12 +37,5 @@ public class CVItemRegistry {
                 output.accept(i.get().asItem());
             }
         );
-    }
-    //@SubscribeEvent
-    public static void registerBuckets() {
-        CVConstants.AcidColors.forEach((name, color) -> {
-            ACID_BUCKETS.put(name, ITEMS.registerItem("acid_" + name + "_bucket", props -> new BucketItem(CVFluidRegistry.ACID_FLUIDS_STILL.get(name).get(), props.craftRemainder(Items.BUCKET).stacksTo(1))));
-            System.out.println("Registered " + name + " acid bucket!");
-        });
     }
 }
