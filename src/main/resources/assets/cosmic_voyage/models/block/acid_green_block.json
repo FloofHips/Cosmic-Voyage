@@ -1,6 +1,7 @@
 {
 	"credit": "Made with Blockbench",
-	"render_type": "minecraft:translucent",
+	"ambientocclusion": false,
+	"render_type": "minecraft:cutout",
 	"textures": {
 		"1": "cosmic_voyage:block/acid_green_caustics",
 		"particle": "cosmic_voyage:block/acid_still"

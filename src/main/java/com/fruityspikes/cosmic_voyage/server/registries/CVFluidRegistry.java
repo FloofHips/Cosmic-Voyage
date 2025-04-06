@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.registries;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.blocks.AcidBlock;
+import com.fruityspikes.cosmic_voyage.server.blocks.AcidFluid;
 import com.fruityspikes.cosmic_voyage.server.util.CVConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -49,15 +50,15 @@ public class CVFluidRegistry {
     //@SubscribeEvent
     public static void registerAcids() {
         CVConstants.AcidColors.forEach((name, color) -> {
-            ACID_FLUIDS_STILL.put(name, FLUIDS.register("acid_" + name, () -> new BaseFlowingFluid.Source(AcidFluidProperties(name))));
+            ACID_FLUIDS_STILL.put(name, FLUIDS.register("acid_" + name, () -> new AcidFluid.Source(AcidFluidProperties(name))));
             System.out.println("Registered " + name + " acid fluid!");
-            ACID_FLUIDS_FLOWING.put(name, FLUIDS.register("acid_" + name + "_flowing", () -> new BaseFlowingFluid.Flowing(AcidFluidProperties(name))));
+            ACID_FLUIDS_FLOWING.put(name, FLUIDS.register("acid_" + name + "_flowing", () -> new AcidFluid.Flowing(AcidFluidProperties(name))));
             System.out.println("Registered " + name + " acid flowing fluid!");
         });
     }
 
     public static BaseFlowingFluid.Properties AcidFluidProperties(String name) {
-        return new BaseFlowingFluid.Properties(CVFluidRegistry.ACID_FLUID_TYPES.get(name)::value, CVFluidRegistry.ACID_FLUIDS_STILL.get(name), CVFluidRegistry.ACID_FLUIDS_FLOWING.get(name))
+        return new AcidFluid.Properties(CVFluidRegistry.ACID_FLUID_TYPES.get(name)::value, CVFluidRegistry.ACID_FLUIDS_STILL.get(name), CVFluidRegistry.ACID_FLUIDS_FLOWING.get(name))
                 .block(CVBlockRegistry.ACID_BLOCKS.get(name))
                 .bucket(CVItemRegistry.ACID_BUCKETS.get(name));
     }

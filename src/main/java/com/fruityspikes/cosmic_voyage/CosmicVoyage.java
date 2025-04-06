@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage;
 
 import com.fruityspikes.cosmic_voyage.client.client_registries.CVModelLayers;
 import com.fruityspikes.cosmic_voyage.client.models.ShipModel;
+import com.fruityspikes.cosmic_voyage.client.renderers.AcidRenderer;
 import com.fruityspikes.cosmic_voyage.client.renderers.ShipRenderer;
 import com.fruityspikes.cosmic_voyage.data.CVBlockstateGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModelGen;
@@ -191,7 +192,7 @@ public class CosmicVoyage
                     private static final ResourceLocation STILL = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_still"),
                             FLOW = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_flowing"),
                             OVERLAY = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_still"),
-                            VIEW_OVERLAY = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_still");
+                            VIEW_OVERLAY = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"textures/block/acid_still.png");
 
                     @Override
                     public ResourceLocation getStillTexture() {
@@ -239,6 +240,11 @@ public class CosmicVoyage
                         RenderSystem.setShaderFogShape(shape);
                     }
 
+                    @Override
+                    public boolean renderFluid(FluidState fluidState, BlockAndTintGetter getter, BlockPos pos, VertexConsumer vertexConsumer, BlockState blockState) {
+                        new AcidRenderer().tesselate(getter, pos, vertexConsumer, blockState, fluidState);
+                        return true;
+                    }
                 }, CVFluidRegistry.ACID_FLUID_TYPES.get(name).get());
             });
         }
