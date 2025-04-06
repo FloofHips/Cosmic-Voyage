@@ -5,16 +5,30 @@ import com.fruityspikes.cosmic_voyage.client.models.ShipModel;
 import com.fruityspikes.cosmic_voyage.client.renderers.ShipRenderer;
 import com.fruityspikes.cosmic_voyage.data.CVBlockstateGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModelGen;
-import com.fruityspikes.cosmic_voyage.data.CVItemModels;
 import com.fruityspikes.cosmic_voyage.data.CVLangGen;
 import com.fruityspikes.cosmic_voyage.server.commands.ShipCommands;
 import com.fruityspikes.cosmic_voyage.server.registries.*;
-import net.minecraft.core.HolderLookup;
+import com.fruityspikes.cosmic_voyage.server.util.CVConstants;
+import com.mojang.blaze3d.shaders.FogShape;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -23,33 +37,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 import static com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry.SHIP;
 import static com.fruityspikes.cosmic_voyage.server.registries.CVItemRegistry.ITEMS;
@@ -95,16 +98,22 @@ public class CosmicVoyage
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         CVBlockRegistry.BLOCKS.register(modEventBus);
+        CVFluidRegistry.FLUIDS.register(modEventBus);
+        CVFluidRegistry.FLUID_TYPES.register(modEventBus);
+
         // Register the Deferred Register to the mod event bus so block entities get registered
         CVBlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
         CVChunkGeneratorRegistry.CHUNK_GENS.register(modEventBus);
         CVEntityRegistry.ENTITIES.register(modEventBus);
         CVFeatureRegistry.FEATURES.register(modEventBus);
         CVPlacementModifierTypes.PLACEMENT_MODIFIERS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so items get registered
-        ITEMS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
+        CVItemRegistry.ITEMS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+
+        CVBlockRegistry.registerFluids();
+        CVFluidRegistry.registerAcidTypes();
+        CVFluidRegistry.registerAcids();
+        CVItemRegistry.registerBuckets();
 
         modEventBus.addListener(this::gatherData);
         // Register ourselves for server and other game events we are interested in.
@@ -112,11 +121,9 @@ public class CosmicVoyage
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
-        // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -143,11 +150,12 @@ public class CosmicVoyage
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
-        
         // Register ship commands
         ShipCommands.register(event.getServer().getCommands().getDispatcher());
+            //CVBlockRegistry.registerFluids();
+            //CVFluidRegistry.registerAcidTypes();
+            //CVFluidRegistry.registerAcids();
+            //CVItemRegistry.registerBuckets();
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -157,8 +165,15 @@ public class CosmicVoyage
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+//            Stream.of(CVFluidRegistry.ACID, CVFluidRegistry.ACID_FLOWING).map(DeferredHolder::get)
+//                    .forEach(fluid -> ItemBlockRenderTypes.setRenderLayer(fluid, RenderType.translucent()));
+
+            CVFluidRegistry.ACID_FLUIDS_STILL.values().forEach(acids -> {
+                ItemBlockRenderTypes.setRenderLayer(acids.get(), RenderType.translucent());
+            });
+            CVFluidRegistry.ACID_FLUIDS_FLOWING.values().forEach(acids -> {
+                ItemBlockRenderTypes.setRenderLayer(acids.get(), RenderType.translucent());
+            });
         }
         @SubscribeEvent
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -168,6 +183,64 @@ public class CosmicVoyage
         @SubscribeEvent
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(SHIP.get(), ShipRenderer::new);
+        }
+        @SubscribeEvent
+        public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+            CVConstants.AcidColors.forEach((name, color) -> {
+                event.registerFluidType(new IClientFluidTypeExtensions() {
+                    private static final ResourceLocation STILL = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_still"),
+                            FLOW = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_flowing"),
+                            OVERLAY = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_still"),
+                            VIEW_OVERLAY = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/acid_still");
+
+                    @Override
+                    public ResourceLocation getStillTexture() {
+                        return STILL;
+                    }
+
+                    @Override
+                    public ResourceLocation getFlowingTexture() {
+                        return FLOW;
+                    }
+
+                    @Override
+                    public ResourceLocation getOverlayTexture() {
+                        return OVERLAY;
+                    }
+
+                    @Override
+                    public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
+                        return VIEW_OVERLAY;
+                    }
+
+                    @Override
+                    public int getTintColor() {
+                        return (int) Long.parseLong(color.substring(2), 16) | 0xFF000000;
+                    }
+
+                    @Override
+                    public Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
+                        int color = this.getTintColor();
+                        return new Vector3f((color >> 16 & 0xFF) / 255F, (color >> 8 & 0xFF) / 255F, (color & 0xFF) / 255F);
+                    }
+
+                    @Override
+                    public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
+                        nearDistance = -8F;
+                        farDistance = 24F;
+
+                        if (farDistance > renderDistance) {
+                            farDistance = renderDistance;
+                            shape = FogShape.SPHERE;
+                        }
+
+                        RenderSystem.setShaderFogStart(nearDistance);
+                        RenderSystem.setShaderFogEnd(farDistance);
+                        RenderSystem.setShaderFogShape(shape);
+                    }
+
+                }, CVFluidRegistry.ACID_FLUID_TYPES.get(name).get());
+            });
         }
     }
     public void gatherData(GatherDataEvent event)

@@ -3,23 +3,25 @@ package com.fruityspikes.cosmic_voyage.server.registries;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.blocks.*;
+import com.fruityspikes.cosmic_voyage.server.util.CVConstants;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.BlockSetType;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 public class CVBlockRegistry {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CosmicVoyage.MODID);
-    //public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
     public static final DeferredBlock<Block> COMPUTER = registerBlock("computer", ComputerBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
@@ -122,12 +124,10 @@ public class CVBlockRegistry {
 
     );
     //Venus
-    public static final DeferredBlock<Block> ACID_STILL = registerBlock("acid_still", AcidBlock::new, BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOL)
-            .requiresCorrectToolForDrops()
-            .strength(1.5F, 6.0F)
-            .sound(SoundType.SLIME_BLOCK)
-    );
+    //public static final DeferredBlock<AcidBlock> ACID_BLOCK = BLOCKS.registerBlock("acid_block",
+    //        props -> new AcidBlock(CVFluidRegistry.ACID.get(), props), BlockBehaviour.Properties.of().noCollission().strength(100.0F).noLootTable().replaceable());
+
+    public static final Map<String, DeferredHolder<Block, LiquidBlock>> ACID_BLOCKS = new HashMap<>();
     public static final DeferredBlock<Block> SEDIMENT = registerBlock("sediment", Block::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
@@ -192,5 +192,21 @@ public class CVBlockRegistry {
         DeferredBlock<Block> toReturn = BLOCKS.register(name, supp);
         CVItemRegistry.ITEMS.registerSimpleBlockItem(name, toReturn);
         return toReturn;
+    }
+
+    private static <T extends Block> DeferredBlock<Block> registerBlockWithoutItem(String name, Function<BlockBehaviour.Properties, ? extends T> func , BlockBehaviour.Properties props) {
+        return BLOCKS.registerBlock(name, func, props);
+    }
+
+    private static <T extends Block> DeferredBlock<Block> registerSpecialWithoutItem(String name, Supplier<? extends T> supp) {
+        return BLOCKS.register(name, supp);
+    }
+    //@SubscribeEvent
+    public static void registerFluids() {
+        CVConstants.AcidColors.forEach((name, color) -> {
+            ACID_BLOCKS.put(name, BLOCKS.registerBlock("acid_" + name + "_block",
+                    props -> new AcidBlock(CVFluidRegistry.ACID_FLUIDS_FLOWING.get(name).get(), props),
+                    BlockBehaviour.Properties.of().noCollission().strength(100.0F).noLootTable().replaceable()));
+        });
     }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "cosmic_voyage:block/acid_green_block",
+  "textures": {
+    "1": "cosmic_voyage:block/acid_turquoise_caustics"
+  }
+}

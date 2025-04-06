@@ -2,10 +2,12 @@ package com.fruityspikes.cosmic_voyage.data;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
-import net.minecraft.client.renderer.RenderType;
+import com.fruityspikes.cosmic_voyage.server.registries.CVFluidRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
@@ -30,7 +32,7 @@ public class CVBlockstateGen extends BlockStateProvider {
 
         basicBlock(CVBlockRegistry.HULL_BLOCK);
         basicBlock(CVBlockRegistry.EPOXY);
-        //simpleBlock(CVBlockRegistry.PLEXIGLASS.get());
+        basicBlock(CVBlockRegistry.PLEXIGLASS);
         basicBlock(CVBlockRegistry.SULFUR_DEPOSIT);
         basicBlock(CVBlockRegistry.DARK_SULFUR_DEPOSIT);
         basicBlock(CVBlockRegistry.TIN);
@@ -56,7 +58,6 @@ public class CVBlockstateGen extends BlockStateProvider {
         ModelFile model = models().getExistingFile(prefix("block/" + name));
         getVariantBuilder(blockRegistryObject.get()).forAllStates(s -> ConfiguredModel.builder().modelFile(model).build());
     }
-
     public void rotatedBlock(DeferredBlock<Block> blockRegistryObject) {
         String name = blockRegistryObject.getId().getPath();
         ModelFile file = models().cubeAll(name, prefix("block/" + name));

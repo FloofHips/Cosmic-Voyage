@@ -1,0 +1,15 @@
+{
+  "ctm": {
+    "ctm_version": 1,
+    "type": "ctm",
+    "layer": "CUTOUT",
+    "textures": ["cosmic_voyage:block/acid_turquoise_caustics_ctm"],
+        "extra": {
+            "connect_to": [
+              { "block": "cosmic_voyage:acid_turquoise" },
+              { "block": "cosmic_voyage:acid_turquoise_block" },
+              { "block": "cosmic_voyage:acid_turquoise_flowing" }
+            ]
+    }
+  }
+}
