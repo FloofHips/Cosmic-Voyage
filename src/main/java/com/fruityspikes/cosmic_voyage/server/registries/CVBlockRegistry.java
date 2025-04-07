@@ -124,9 +124,6 @@ public class CVBlockRegistry {
 
     );
     //Venus
-    //public static final DeferredBlock<AcidBlock> ACID_BLOCK = BLOCKS.registerBlock("acid_block",
-    //        props -> new AcidBlock(CVFluidRegistry.ACID.get(), props), BlockBehaviour.Properties.of().noCollission().strength(100.0F).noLootTable().replaceable());
-
     public static final Map<String, DeferredHolder<Block, LiquidBlock>> ACID_BLOCKS = new HashMap<>();
     public static final DeferredBlock<Block> SEDIMENT = registerBlock("sediment", Block::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)

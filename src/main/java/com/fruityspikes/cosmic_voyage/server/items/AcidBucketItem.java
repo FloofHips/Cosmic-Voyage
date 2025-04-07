@@ -33,8 +33,14 @@ public class AcidBucketItem extends BucketItem {
     }
 
     public Fluid chooseLiquid(Level pLevel, BlockPos pPos){
+        Fluid fluid = pLevel.getBlockState(pPos).getFluidState().getType();
+        for (DeferredHolder<Fluid, Fluid> holder : CVFluidRegistry.ACID_FLUIDS_STILL.values()) {
+            if (fluid.isSame(holder.get())) {
+                return holder.get();
+            }
+        }
         for (Direction direction : Direction.values()) {
-            Fluid fluid = pLevel.getBlockState(pPos.relative(direction)).getFluidState().getType();
+            fluid = pLevel.getBlockState(pPos.relative(direction)).getFluidState().getType();
             if(fluid instanceof EmptyFluid)
                 continue;
 

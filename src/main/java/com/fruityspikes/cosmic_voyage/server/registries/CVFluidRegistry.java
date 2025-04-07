@@ -44,16 +44,16 @@ public class CVFluidRegistry {
                     .supportsBoating(true)
                     .canHydrate(true)
                     .addDripstoneDripping(0.25F, ParticleTypes.SCULK_SOUL, Blocks.POWDER_SNOW_CAULDRON, SoundEvents.END_PORTAL_SPAWN))));
-            System.out.println("Registered " + name + " acid type!");
+            //System.out.println("Registered " + name + " acid type!");
         });
     }
     //@SubscribeEvent
     public static void registerAcids() {
         CVConstants.AcidColors.forEach((name, color) -> {
             ACID_FLUIDS_STILL.put(name, FLUIDS.register("acid_" + name, () -> new AcidFluid.Source(AcidFluidProperties(name))));
-            System.out.println("Registered " + name + " acid fluid!");
+            //System.out.println("Registered " + name + " acid fluid!");
             ACID_FLUIDS_FLOWING.put(name, FLUIDS.register("acid_" + name + "_flowing", () -> new AcidFluid.Flowing(AcidFluidProperties(name))));
-            System.out.println("Registered " + name + " acid flowing fluid!");
+            //System.out.println("Registered " + name + " acid flowing fluid!");
         });
     }
 
