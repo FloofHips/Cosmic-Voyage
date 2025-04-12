@@ -1,0 +1,84 @@
+{
+  "type": "minecraft:the_end",
+  "generator": {
+    "type": "cosmic_voyage:venus",
+    "biome_source": {
+      "biomes": [
+        {
+          "biome": "cosmic_voyage:venus_acid_lake",
+          "parameters": {
+            "temperature": 0.0,
+            "humidity": [0.7, 1.0],
+            "continentalness": [-1.0, -0.5],
+            "erosion": [-0.5, 0.3],
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "cosmic_voyage:venus_acid_plains",
+          "parameters": {
+            "temperature": 0.2,
+            "humidity": [0.4, 0.8],
+            "continentalness": [-0.3, 0.2],
+            "erosion": [-0.8, -0.3],
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "cosmic_voyage:venus_mountain",
+          "parameters": {
+            "temperature": 0.0,
+            "humidity": [-1.0, 0.2],
+            "continentalness": [0.7, 1.0],
+            "erosion": [0.6, 1.0],
+            "weirdness": [-0.5, 0.0],
+            "depth": [-1.0, 0.2],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "cosmic_voyage:venus_fool_cave",
+          "parameters": {
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "weirdness": [0.5, 1.0],
+            "depth": [0.8, 1.0],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "cosmic_voyage:venus_gene_cave",
+          "parameters": {
+            "temperature": 0.1,
+            "humidity": 0.0,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "weirdness": [0.7, 1.0],
+            "depth": [0.8, 1.0],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "cosmic_voyage:venus_barrens",
+          "parameters": {
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "continentalness": 0.0,
+            "erosion": 0.0,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        }
+      ],
+      "type": "minecraft:multi_noise"
+    },
+    "settings": "cosmic_voyage:venus"
+  }
+}

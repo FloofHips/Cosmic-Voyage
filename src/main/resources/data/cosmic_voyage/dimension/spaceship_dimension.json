@@ -2,24 +2,10 @@
   "type": "cosmic_voyage:spaceship_dimension_type",
   "generator": {
     "type": "minecraft:noise",
-    "seed": 0,
     "settings": "cosmic_voyage:ship",
     "biome_source": {
-      "type": "minecraft:multi_noise",
-      "biomes": [
-        {
-          "biome": "cosmic_voyage:ship",
-          "parameters": {
-            "temperature": 0,
-            "humidity": 0,
-            "continentalness": 0,
-            "erosion": 0,
-            "weirdness": 0,
-            "depth": 0,
-            "offset": 0
-          }
-        }
-      ]
+      "type": "minecraft:fixed",
+      "biome": "cosmic_voyage:ship"
     }
   }
 }

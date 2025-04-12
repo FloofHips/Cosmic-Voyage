@@ -1,5 +1,5 @@
 {
-  "sea_level": 63,
+  "sea_level": 60,
   "disable_mob_generation": false,
   "aquifers_enabled": true,
   "ore_veins_enabled": true,
@@ -410,7 +410,7 @@
         "if_true": {
           "type": "minecraft:biome",
           "biome_is": [
-            "cosmic_voyage:test"
+            "cosmic_voyage:venus_barrens"
           ]
         },
         "then_run": {
@@ -463,6 +463,36 @@
                   "result_state": {
                     "Name": "minecraft:purple_stained_glass"
                   }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:biome",
+          "biome_is": [
+            "cosmic_voyage:venus_mountain"
+          ]
+        },
+        "then_run": {
+          "type": "minecraft:sequence",
+          "sequence": [
+            {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:stone_depth",
+                "offset": 0,
+                "surface_type": "floor",
+                "add_surface_depth": false,
+                "secondary_depth_range": 0
+              },
+              "then_run": {
+                "type": "minecraft:block",
+                "result_state": {
+                  "Name": "minecraft:blue_terracotta"
                 }
               }
             }

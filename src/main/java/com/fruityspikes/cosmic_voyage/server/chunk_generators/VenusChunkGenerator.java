@@ -1,15 +1,19 @@
 package com.fruityspikes.cosmic_voyage.server.chunk_generators;
 
+import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
 import com.fruityspikes.cosmic_voyage.server.registries.CVFluidRegistry;
+import com.fruityspikes.cosmic_voyage.server.util.VoronoiNoise;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,13 +32,13 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class VenusChunkGenerator extends NoiseBasedChunkGenerator {
-    //TODO PLEASE REPLACE WITH VORONOI!!!!!!!!!!!
-    private final Supplier<SimplexNoise> voronoiNoise = Suppliers.memoize(() ->
-            new SimplexNoise(RandomSource.create(12345L))
+    private final Supplier<VoronoiNoise> voronoiNoise = Suppliers.memoize(() ->
+            new VoronoiNoise(12345L, (short) 0)
     );
     private final List<DeferredHolder<Fluid, Fluid>> acidVariants;
 
@@ -46,10 +50,14 @@ public class VenusChunkGenerator extends NoiseBasedChunkGenerator {
         })).apply(p_255585_, p_255585_.stable(VenusChunkGenerator::new));
     });
     private final Holder<NoiseGeneratorSettings> settings;
+    private static final int QUARRY_DEPTH = 120;
+    private static final int STRATA_COUNT = 8;
+    private final SimplexNoise strataNoise;
     public VenusChunkGenerator(BiomeSource p_256415_, Holder<NoiseGeneratorSettings> p_256182_) {
         super(p_256415_, p_256182_);
         this.settings = p_256182_;
         this.acidVariants = CVFluidRegistry.ACID_FLUIDS_STILL.values().stream().toList();
+        this.strataNoise = new SimplexNoise(RandomSource.create(1546786));
     }
     protected MapCodec<? extends ChunkGenerator> codec() {
         return CODEC;
@@ -90,15 +98,14 @@ public class VenusChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     private Fluid selectAcidVariant(BlockPos pos) {
-        if (acidVariants.isEmpty()) return Fluids.WATER;
+        double cellSize = 5.0;
+        VoronoiNoise.CellResult cell = voronoiNoise.get().getCell(
+                pos.getX(),
+                pos.getZ(),
+                1.0 / cellSize
+        );
 
-        double scale = 0.1;
-        double nx = pos.getX() * scale;
-        double nz = pos.getZ() * scale;
-
-        double noise = voronoiNoise.get().getValue(nx, nz, 0.5);
-        int variantIndex = (int) (Math.abs(noise) * acidVariants.size()) % acidVariants.size();
-
+        int variantIndex = (int)(Math.abs(cell.cellId()) % acidVariants.size());
         return acidVariants.get(variantIndex).get();
     }
 }

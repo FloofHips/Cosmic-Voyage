@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.registries;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.entities.ShipEntity;
+import com.fruityspikes.cosmic_voyage.server.worldgen.features.PillarFeature;
 import com.fruityspikes.cosmic_voyage.server.worldgen.features.StructureFeature;
 import com.fruityspikes.cosmic_voyage.server.worldgen.features.StructureFeatureConfiguration;
 import com.fruityspikes.cosmic_voyage.server.worldgen.features.VenusBoulderFeature;
@@ -26,5 +27,6 @@ public class CVFeatureRegistry {
     //Vehicles
     public static final DeferredHolder<Feature<?>, VenusBoulderFeature> VENUS_BOULDER = FEATURES.register("venus_boulder", VenusBoulderFeature::new);
     public static final DeferredHolder<Feature<?>, StructureFeature> STRUCTURE_FEATURE = FEATURES.register("structure_feature", () -> new StructureFeature(StructureFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, PillarFeature> ACID_PILLAR = FEATURES.register("acid_pillar", PillarFeature::new);
 
 }
