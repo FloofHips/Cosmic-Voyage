@@ -1,7 +1,11 @@
 package com.fruityspikes.cosmic_voyage.server.blocks;
 
+import com.fruityspikes.cosmic_voyage.server.ships.Ship;
+import com.fruityspikes.cosmic_voyage.server.ships.ShipRoom;
+import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -23,7 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
-public class ShipLightBlock extends Block {
+public class ShipLightBlock extends Block implements IShipLight {
     public static final MapCodec<LampuleBlock> CODEC = simpleCodec(LampuleBlock::new);
     public static final BooleanProperty LIT;
     public ShipLightBlock(BlockBehaviour.Properties p_154339_) {
@@ -47,10 +51,39 @@ public class ShipLightBlock extends Block {
             return InteractionResult.CONSUME;
         }
     }
+    @Override
+    protected void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
+        if (!pLevel.isClientSide) {
+            SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
+            Ship ship = manager.getShipByPosition(pPos);
+            if (ship != null) {
+                ShipRoom room = ship.getRoomByWorldPos(pPos);
+                if (room != null) {
+                    room.removeLight(pState, pPos, pLevel);
+                }
+            }
+        }
+    }
+    @Override
+    protected void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+        if (!pLevel.isClientSide) {
+            SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
+            Ship ship = manager.getShipByPosition(pPos);
+            if (ship != null) {
+                ShipRoom room = ship.getRoomByWorldPos(pPos);
+                if (room != null) {
+                    room.addLight(pState, pPos, pLevel);
+                }
+            }
+        }
+    }
     public void toggle(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
-        pLevel.setBlock(pPos, (BlockState)pState.cycle(LIT), 2);
-        playSound(pPlayer, pLevel, pPos, pState);
-        pLevel.gameEvent(pPlayer, (Boolean)pState.getValue(LIT) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
+        if(pState.getValue(LIT))
+            turnOff(pState, pLevel, pPos, pPlayer);
+        else
+            turnOn(pState, pLevel, pPos, pPlayer);
     }
     protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
         float f = (Boolean)pState.getValue(LIT) ? 0.6F : 1.0F;
@@ -67,5 +100,19 @@ public class ShipLightBlock extends Block {
 
     static {
         LIT = BlockStateProperties.LIT;
+    }
+
+    @Override
+    public void turnOn(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+        pLevel.setBlock(pPos, pState.setValue(LIT, true), 2);
+        playSound(pPlayer, pLevel, pPos, pState);
+        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
+    }
+
+    @Override
+    public void turnOff(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+        pLevel.setBlock(pPos, pState.setValue(LIT, false), 2);
+        playSound(pPlayer, pLevel, pPos, pState);
+        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_DEACTIVATE, pPos);
     }
 }

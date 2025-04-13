@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SpaceshipManager extends SavedData {
-    private static SpaceshipManager instance;
+    private SpaceshipManager instance;
     private static final String SAVED_DATA_NAME = CosmicVoyage.MODID + "_spaceships";
     private static final Logger LOGGER = LogUtils.getLogger();
     
@@ -59,26 +59,18 @@ public class SpaceshipManager extends SavedData {
     }
 
     public static SpaceshipManager get(ServerLevel level) {
-        if (instance == null) {
-            MinecraftServer server = level.getServer();
-            ServerLevel overworld = server.overworld();
-            instance = overworld.getDataStorage().computeIfAbsent(
-                    new SavedData.Factory<>(
-                            SpaceshipManager::new,
-                            (tag, provider) -> SpaceshipManager.load(tag),
-                            DataFixTypes.LEVEL
-                    ),
-                    SAVED_DATA_NAME
-            );
+        ServerLevel spaceshipDimension = level.getServer().getLevel(SpaceshipDimension.DIMENSION_KEY);
+        if (spaceshipDimension == null) {
+            spaceshipDimension = level.getServer().overworld();
         }
-        return instance;
-    }
-
-    public static SpaceshipManager getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("SpaceshipManager has not been initialized!");
-        }
-        return instance;
+        return spaceshipDimension.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        SpaceshipManager::new,
+                        (tag, provider) -> SpaceshipManager.load(tag),
+                        DataFixTypes.LEVEL
+                ),
+                SAVED_DATA_NAME
+        );
     }
     
     public Ship createShip(BlockPos entityLocation, ServerLevel level) {

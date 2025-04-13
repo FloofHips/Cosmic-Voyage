@@ -8,10 +8,14 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -25,40 +29,15 @@ import net.neoforged.neoforge.client.textures.FluidSpriteCache;
 import java.util.Iterator;
 
 public class AcidRenderer {
+    static TagKey<Fluid> acidTag = TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("cosmic_voyage", "acids"));
+
     private static final float MAX_FLUID_HEIGHT = 0.8888889F;
 
     public AcidRenderer() {
     }
 
-    private static boolean isNeighborSameFluid(FluidState pFirstState, FluidState pSecondState) {
-
-//        CVConstants.AcidColors.forEach((name, color) -> {
-//            if (pSecondState.is(CVFluidRegistry.ACID_FLUIDS_STILL.get(name).get()))
-//                return true;
-//        });
-//        CVConstants.AcidColors.forEach((name, color) -> {
-//            if (pSecondState.is(CVFluidRegistry.ACID_FLUIDS_FLOWING.get(name).get()))
-//                return true;
-//        });
-//        return false;
-
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_STILL.get("yellow").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_STILL.get("olive").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_STILL.get("green").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_STILL.get("turquoise").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("yellow").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("olive").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("green").get()))
-            return true;
-        if(pSecondState.is(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("turquoise").get()))
-            return true;
-        return false;
+    private static boolean isNeighborSameFluid(FluidState pSecondState) {
+        return pSecondState.is(acidTag);
     }
 
     private static boolean isFaceOccludedByState(BlockGetter pLevel, Direction pFace, float pHeight, BlockPos pPos, BlockState pState) {
@@ -80,7 +59,7 @@ public class AcidRenderer {
     }
 
     public static boolean shouldRenderFace(BlockAndTintGetter pLevel, BlockPos pPos, FluidState pFluidState, BlockState pBlockState, Direction pSide, FluidState pNeighborFluid) {
-        return !isFaceOccludedBySelf(pLevel, pPos, pBlockState, pSide) && !isNeighborSameFluid(pFluidState, pNeighborFluid);
+        return !isFaceOccludedBySelf(pLevel, pPos, pBlockState, pSide) && !isNeighborSameFluid(pNeighborFluid);
     }
 
     public void tesselate(BlockAndTintGetter pLevel, BlockPos pPos, VertexConsumer pBuffer, BlockState pBlockState, FluidState pFluidState) {
@@ -103,7 +82,7 @@ public class AcidRenderer {
         FluidState fluidstate4 = blockstate4.getFluidState();
         BlockState blockstate5 = pLevel.getBlockState(pPos.relative(Direction.EAST));
         FluidState fluidstate5 = blockstate5.getFluidState();
-        boolean flag1 = !isNeighborSameFluid(pFluidState, fluidstate1);
+        boolean flag1 = !isNeighborSameFluid(fluidstate1);
         boolean flag2 = shouldRenderFace(pLevel, pPos, pFluidState, pBlockState, Direction.DOWN, fluidstate) && !isFaceOccludedByNeighbor(pLevel, pPos, Direction.DOWN, 0.8888889F, blockstate);
         boolean flag3 = shouldRenderFace(pLevel, pPos, pFluidState, pBlockState, Direction.NORTH, fluidstate2);
         boolean flag4 = shouldRenderFace(pLevel, pPos, pFluidState, pBlockState, Direction.SOUTH, fluidstate3);
@@ -352,23 +331,7 @@ public class AcidRenderer {
     }
 
     private boolean isAcid(Fluid pFluid){
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_STILL.get("yellow").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_STILL.get("olive").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_STILL.get("green").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_STILL.get("turquoise").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("yellow").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("olive").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("green").get()))
-            return true;
-        if(pFluid.isSame(CVFluidRegistry.ACID_FLUIDS_FLOWING.get("turquoise").get()))
-            return true;
-        return false;
+        return pFluid.is(acidTag);
     }
     private float getHeight(BlockAndTintGetter pLevel, Fluid pFluid, BlockPos pPos, BlockState pBlockState, FluidState pFluidState) {
         if (isAcid(pFluidState.getType())) {

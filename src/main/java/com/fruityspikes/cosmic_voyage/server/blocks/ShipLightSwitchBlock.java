@@ -1,12 +1,17 @@
 package com.fruityspikes.cosmic_voyage.server.blocks;
 
+import com.fruityspikes.cosmic_voyage.server.ships.Ship;
+import com.fruityspikes.cosmic_voyage.server.ships.ShipRoom;
+import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -28,29 +33,42 @@ public class ShipLightSwitchBlock extends HorizontalDirectionalBlock {
     public static final BooleanProperty UP = BooleanProperty.create("up");
     public ShipLightSwitchBlock(Properties p_54633_) {
         super(p_54633_);
-        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(UP, false)));
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(UP, true)));
     }
 
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return null;
     }
-
+    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
+    }
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
         if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
-            this.pull(pState.cycle(UP), pLevel, pPos, (Player)null);
+            this.click(pState.cycle(UP), pLevel, pPos, (Player)null);
             return InteractionResult.CONSUME;
         }
     }
 
-    public void pull(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
-        BlockState blockstate = (BlockState)pState.cycle(UP);
+    public void click(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+        SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
+        Ship ship = manager.getShipByPosition(pPos);
         pLevel.setBlock(pPos, pState, 3);
-        //Ship
+        if (ship != null) {
+            ShipRoom room = ship.getRoomByWorldPos(pPos);
+            if (room != null) {
+                if (pState.getValue(UP)) {
+                    room.turnOnLights();
+                } else {
+                    room.turnOffLights();
+                }
+            }
+        }
+
         playSound(pPlayer, pLevel, pPos, pState);
-        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
+        pLevel.gameEvent(pPlayer, pState.getValue(UP) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
     }
 
     protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {

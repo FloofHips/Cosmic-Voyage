@@ -4,9 +4,12 @@ import com.fruityspikes.cosmic_voyage.server.registries.CVFluidRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
@@ -31,11 +34,12 @@ public class AcidBucketItem extends BucketItem {
     public AcidBucketItem(Fluid pContent, Properties pProperties) {
         super(pContent, pProperties);
     }
+    static TagKey<Fluid> acidTag = TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("cosmic_voyage", "acids"));
 
     public Fluid chooseLiquid(Level pLevel, BlockPos pPos){
         Fluid fluid = pLevel.getBlockState(pPos).getFluidState().getType();
         for (DeferredHolder<Fluid, Fluid> holder : CVFluidRegistry.ACID_FLUIDS_STILL.values()) {
-            if (fluid.isSame(holder.get())) {
+            if (fluid.is(acidTag)) {
                 return holder.get();
             }
         }

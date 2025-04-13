@@ -1,8 +1,12 @@
 package com.fruityspikes.cosmic_voyage.server.blocks;
 
+import com.fruityspikes.cosmic_voyage.server.ships.Ship;
+import com.fruityspikes.cosmic_voyage.server.ships.ShipRoom;
+import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -36,6 +40,36 @@ public class LampuleBlock extends RodBlock implements IShipLight {
     @Override
     protected MapCodec<? extends RodBlock> codec() {
         return CODEC;
+    }
+
+    @Override
+    protected void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+        if (!pLevel.isClientSide) {
+            SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
+            Ship ship = manager.getShipByPosition(pPos);
+            if (ship != null) {
+                ShipRoom room = ship.getRoomByWorldPos(pPos);
+                if (room != null) {
+                    room.addLight(pState, pPos, pLevel);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
+        if (!pLevel.isClientSide) {
+            SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
+            Ship ship = manager.getShipByPosition(pPos);
+            if (ship != null) {
+                ShipRoom room = ship.getRoomByWorldPos(pPos);
+                if (room != null) {
+                    room.removeLight(pState, pPos, pLevel);
+                }
+            }
+        }
     }
 
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {

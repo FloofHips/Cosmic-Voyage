@@ -1,6 +1,7 @@
 package com.fruityspikes.cosmic_voyage.server.ships;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
+import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -128,22 +129,27 @@ public class Ship {
          this.rooms[2].activateInitialRoom(level);
     }
     public void generateDoorWays(ServerLevel level) {
-        BlockState doorMaterial = Blocks.GLASS.defaultBlockState();
+        BlockState doorMaterial = CVBlockRegistry.SHIP_ROOM_GATE.get().defaultBlockState();
+        BlockPos pos;
         for (ShipRoom room: rooms) {
-            BlockPos pos = room.getDimensionLocation().offset(0, -28, 0);
+            BlockPos roomOrigin = room.getDimensionLocation().offset(8, -28, 8);
+            pos = roomOrigin;
             for (Direction direction : Direction.Plane.HORIZONTAL){
-                for (int height = 0; height < 3; height++) {
-                    for (int width = 0; width < 2; width++) {
+                if(direction==Direction.EAST || direction==Direction.SOUTH)
+                    pos = pos.relative(direction, 7);
+                else
+                    pos = pos.relative(direction, 8);
 
+                for (int height = 1; height < 4; height++) {
+                    for (int width = -1; width < 1; width++) {
                         if (direction.getAxis() == Direction.Axis.X) {
-                            pos = pos.offset(0, -1 + height, width);
+                            level.setBlock(pos.offset(0, height, width), doorMaterial, 3);
                         } else {
-                            pos = pos.offset(width, -1 + height, 0);
+                            level.setBlock(pos.offset(width, height, 0), doorMaterial, 3);
                         }
-
-                        level.setBlock(pos, doorMaterial, 3);
                     }
                 }
+                pos = roomOrigin;
             }
         }
     }
