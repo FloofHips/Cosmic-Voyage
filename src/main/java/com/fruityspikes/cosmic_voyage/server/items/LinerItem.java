@@ -20,7 +20,7 @@ public class LinerItem extends DevBuildingItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-
+        BlockPos playerpos = player.blockPosition().offset(0, -1,0);
         if (level.isClientSide()) {
             return InteractionResultHolder.success(stack);
         }
@@ -29,15 +29,15 @@ public class LinerItem extends DevBuildingItem {
 
         if (hitResult.getType() != HitResult.Type.BLOCK) {
             Vec3 lookVec = player.getLookAngle();
-            BlockPos endPos = player.blockPosition().offset(
+            BlockPos endPos = playerpos.offset(
                     (int)(lookVec.x * 50),
                     (int)(lookVec.y * 50),
                     (int)(lookVec.z * 50)
             );
-            drawLine(level, player.blockPosition(), endPos, getPlacementBlock(player));
+            drawLine(level, playerpos, endPos, getPlacementBlock(player));
         } else {
             BlockPos endPos = ((BlockHitResult)hitResult).getBlockPos();
-            drawLine(level, player.blockPosition(), endPos, getPlacementBlock(player));
+            drawLine(level, playerpos, endPos, getPlacementBlock(player));
         }
 
         playPlaceSound(level, player.blockPosition());

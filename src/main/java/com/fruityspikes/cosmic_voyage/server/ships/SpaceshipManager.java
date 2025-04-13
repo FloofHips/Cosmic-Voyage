@@ -82,9 +82,11 @@ public class SpaceshipManager extends SavedData {
     }
     
     public Ship createShip(BlockPos entityLocation, ServerLevel level) {
-        BlockPos shipDimensionPos = new BlockPos(nextShipDimensionX, 64, nextShipDimensionZ);
+        int chunkAlignedX = (nextShipDimensionX / 16) * 16;
+        int chunkAlignedZ = (nextShipDimensionZ / 16) * 16;
+        BlockPos shipDimensionPos = new BlockPos(chunkAlignedX, 64, chunkAlignedZ);
         ResourceLocation dimension = ResourceLocation.parse(level.dimension().location().toString());
-        System.out.println(dimension);
+
         UUID shipId = UUID.randomUUID();
         Ship ship = new Ship(shipId, nextSimpleId, entityLocation, shipDimensionPos, dimension);
         ships.put(shipId, ship);
@@ -97,9 +99,9 @@ public class SpaceshipManager extends SavedData {
 
         ServerLevel spaceshipDimension = level.getServer().getLevel(SpaceshipDimension.DIMENSION_KEY);
         if (spaceshipDimension != null) {
-            ChunkPos chunkPos = new ChunkPos(shipDimensionPos);  // Convert BlockPos to ChunkPos
-            spaceshipDimension.getChunkSource().addRegionTicket(TicketType.START, chunkPos, 1, Unit.INSTANCE);  // Use Unit.INSTANCE as the value
-            ship.initializeStructure(spaceshipDimension);
+            ChunkPos chunkPos = new ChunkPos(shipDimensionPos);
+            spaceshipDimension.getChunkSource().addRegionTicket(TicketType.START, chunkPos, 1, Unit.INSTANCE);
+            ship.initializeShip(spaceshipDimension);
         } else {
             LOGGER.error("Spaceship dimension is not available!");
         }
@@ -121,7 +123,25 @@ public class SpaceshipManager extends SavedData {
         UUID uuid = simpleIdToUuid.get(simpleId);
         return uuid != null ? ships.get(uuid) : null;
     }
+    public Ship getShipByPosition(BlockPos pos) {
+        final int SHIP_SIZE = 80;
 
+        for (Ship ship : this.getShips().values()) {
+            BlockPos shipPos = ship.getDimensionLocation();
+
+            int minX = shipPos.getX();
+            int minZ = shipPos.getZ();
+            int maxX = minX + SHIP_SIZE - 1;
+            int maxZ = minZ + SHIP_SIZE - 1;
+
+            if (pos.getX() >= minX && pos.getX() <= maxX &&
+                    pos.getZ() >= minZ && pos.getZ() <= maxZ) {
+                return ship;
+            }
+        }
+
+        return null;
+    }
     public Map<UUID, Ship> getShips() {
         return ships;
     }
@@ -135,10 +155,10 @@ public class SpaceshipManager extends SavedData {
     }
 
     private void updateNextShipPosition() {
-        // Move to next position, ensuring ships are spaced apart
+        // move to next position
         nextShipDimensionX += SHIP_SPACING;
         
-        // If we've gone too far in X direction, reset X and increment Z
+        // if we go too far into X axys, reset X and increment Z
         if (nextShipDimensionX > 10000) {
             nextShipDimensionX = 0;
             nextShipDimensionZ += SHIP_SPACING;
@@ -151,7 +171,7 @@ public class SpaceshipManager extends SavedData {
         SpaceshipManager manager = new SpaceshipManager();
         
         if (tag.contains("ships")) {
-            ListTag shipsList = tag.getList("ships", 10); // 10 is the NBT ID for CompoundTag
+            ListTag shipsList = tag.getList("ships", 10);
             shipsList.forEach(shipTag -> {
                 Ship ship = Ship.load((CompoundTag) shipTag);
                 manager.ships.put(ship.getId(), ship);

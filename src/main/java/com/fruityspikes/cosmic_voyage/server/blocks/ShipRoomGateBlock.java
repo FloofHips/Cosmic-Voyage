@@ -1,6 +1,9 @@
 package com.fruityspikes.cosmic_voyage.server.blocks;
 
 import com.fruityspikes.cosmic_voyage.server.registries.CVItemRegistry;
+import com.fruityspikes.cosmic_voyage.server.ships.Ship;
+import com.fruityspikes.cosmic_voyage.server.ships.ShipRoom;
+import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,20 +65,26 @@ public class ShipRoomGateBlock extends Block {
                         for (int z = -1; z <= 1; z++) {
                             if (x == 0 && y == 0 && z == 0) continue;
                             BlockPos particlePos = pPos.offset(x, y, z);
-                            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, particlePos.getX() + 0.5, particlePos.getY() + 0.5, particlePos.getZ() + 0.5, 5, 0.5, 0.5, 0.5, 0.2);
+                            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                                    particlePos.getX() + 0.5,
+                                    particlePos.getY() + 0.5,
+                                    particlePos.getZ() + 0.5,
+                                    5, 0.5, 0.5, 0.5, 0.2);
                         }
                     }
                 }
 
                 serverLevel.playSound(null, pPos, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 1.0f, 1.0f);
 
-                // Schedule a tick update for 1 second later (20 ticks)
                 serverLevel.scheduleTick(pPos, this, 20);
             }
             return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
         }
         else {
-            return pHand == InteractionHand.MAIN_HAND && isRoomUpgrade(pPlayer.getItemInHand(InteractionHand.OFF_HAND)) ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return pHand == InteractionHand.MAIN_HAND &&
+                    isRoomUpgrade(pPlayer.getItemInHand(InteractionHand.OFF_HAND)) ?
+                    ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION :
+                    ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
     }
 
@@ -95,63 +104,56 @@ public class ShipRoomGateBlock extends Block {
                 }
             }
         }
+
         level.playSound(null, pos, SoundEvents.VAULT_OPEN_SHUTTER, SoundSource.BLOCKS, 1.0f, 1.0f);
 
-        BlockPos adjacentChunkPos = getAdjacentChunkPos(pos, lastHitFace);
-        placeStructure(level, adjacentChunkPos);
-    }
-    private BlockPos getAdjacentChunkPos(BlockPos pos, Direction face) {
-        int chunkX = pos.getX() >> 4;
-        int chunkY = pos.getY() >> 4;
-        int chunkZ = pos.getZ() >> 4;
+        SpaceshipManager manager = SpaceshipManager.get(level);
+        Ship ship = manager.getShipByPosition(pos);
 
-        switch (face) {
-            case UP:
-                return new BlockPos(chunkX << 4, (chunkY + 1) << 4, chunkZ << 4);
-            case DOWN:
-                return new BlockPos(chunkX << 4, (chunkY - 1) << 4, chunkZ << 4);
-            case NORTH:
-                return new BlockPos(chunkX << 4, chunkY << 4, (chunkZ - 1) << 4);
-            case SOUTH:
-                return new BlockPos(chunkX << 4, chunkY << 4, (chunkZ + 1) << 4);
-            case WEST:
-                return new BlockPos((chunkX - 1) << 4, chunkY << 4, chunkZ << 4);
-            case EAST:
-                return new BlockPos((chunkX + 1) << 4, chunkY << 4, chunkZ << 4);
-            default:
-                return pos;
+        if(ship != null){
+            ShipRoom currentRoom = ship.getRoomByWorldPos(pos);
+            int currentIndex = currentRoom.getIndex();
+
+            int newIndex = getAdjacentRoomIndex(currentIndex, lastHitFace);
+
+            if(newIndex != -1) {
+                if(!ship.getRoom(newIndex).isActive())
+                    ship.getRoom(newIndex).activateRoom(level);
+                activateConnectingHallways(level, ship, newIndex);
+            }
         }
     }
-    private void placeStructure(ServerLevel level, BlockPos pos) {
-        Random random = new Random();
-        BlockState[] woolColors = {
-                Blocks.WHITE_WOOL.defaultBlockState(),
-                Blocks.ORANGE_WOOL.defaultBlockState(),
-                Blocks.MAGENTA_WOOL.defaultBlockState(),
-                Blocks.LIGHT_BLUE_WOOL.defaultBlockState(),
-                Blocks.YELLOW_WOOL.defaultBlockState(),
-                Blocks.LIME_WOOL.defaultBlockState(),
-                Blocks.PINK_WOOL.defaultBlockState(),
-                Blocks.GRAY_WOOL.defaultBlockState(),
-                Blocks.LIGHT_GRAY_WOOL.defaultBlockState(),
-                Blocks.CYAN_WOOL.defaultBlockState(),
-                Blocks.PURPLE_WOOL.defaultBlockState(),
-                Blocks.BLUE_WOOL.defaultBlockState(),
-                Blocks.BROWN_WOOL.defaultBlockState(),
-                Blocks.GREEN_WOOL.defaultBlockState(),
-                Blocks.RED_WOOL.defaultBlockState(),
-                Blocks.BLACK_WOOL.defaultBlockState()
-        };
+    private int getAdjacentRoomIndex(int currentIndex, Direction direction) {
+        int currentX = currentIndex % 5;
+        int currentZ = currentIndex / 5;
 
-        BlockState randomWool = woolColors[random.nextInt(woolColors.length)];
+        int newX = currentX + direction.getStepX();
+        int newZ = currentZ + direction.getStepZ();
 
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
-                    BlockPos targetPos = pos.offset(x, y, z);
-                    level.setBlock(targetPos, randomWool, 3);
-                }
+        if(newX >= 0 && newX < 5 && newZ >= 0 && newZ < 5) {
+            return newZ * 5 + newX;
+        }
+        return -1;
+    }
+
+    private void activateConnectingHallways(ServerLevel level, Ship ship, int roomB) {
+        int roomBX = roomB % 5;
+        int roomBZ = roomB / 5;
+
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            int adjX = roomBX + dir.getStepX();
+            int adjZ = roomBZ + dir.getStepZ();
+            int adjRoomX = adjX + dir.getStepX();
+            int adjRoomZ = adjZ + dir.getStepZ();
+
+            if (adjX < 0 || adjX >= 5 || adjZ < 0 || adjZ >= 5 || adjRoomX < 0 || adjRoomX >= 5 || adjRoomZ < 0 || adjRoomZ >= 5) {
+                continue;
             }
+
+            int adjacentIndex = adjZ * 5 + adjX;
+            int adjacentRoomIndex = adjRoomZ * 5 + adjRoomX;
+            if(ship.rooms[adjacentRoomIndex].isActive())
+                ship.rooms[adjacentIndex].activateRoom(level);
         }
     }
 }

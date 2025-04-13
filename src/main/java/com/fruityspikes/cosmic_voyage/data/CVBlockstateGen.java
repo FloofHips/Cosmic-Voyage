@@ -38,6 +38,7 @@ public class CVBlockstateGen extends BlockStateProvider {
         basicBlock(CVBlockRegistry.TIN);
         basicBlock(CVBlockRegistry.CONCRETE);
         basicBlock(CVBlockRegistry.UNSHAKABLE_METAL);
+        basicBlock(CVBlockRegistry.LIGHT_BOARD);
         //basicBlock(CVBlockRegistry.GRIDLIGHT);
         doorBlockWithRenderType((DoorBlock) CVBlockRegistry.TIN_DOOR.get(), ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/tin_door_bottom"), ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID,"block/tin_door_top"), "minecraft:cutout");
 

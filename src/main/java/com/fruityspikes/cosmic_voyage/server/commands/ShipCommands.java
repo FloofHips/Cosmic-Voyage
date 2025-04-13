@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.commands;
 
 import com.fruityspikes.cosmic_voyage.server.dimension.SpaceshipDimension;
 import com.fruityspikes.cosmic_voyage.server.ships.Ship;
+import com.fruityspikes.cosmic_voyage.server.ships.ShipRoom;
 import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.fruityspikes.cosmic_voyage.server.util.TeleportUtil;
 import com.mojang.brigadier.CommandDispatcher;
@@ -14,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class ShipCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -21,6 +23,8 @@ public class ShipCommands {
             .requires(source -> source.hasPermission(2))
             .then(Commands.literal("create")
                 .executes(context -> createShip(context.getSource())))
+            .then(Commands.literal("find")
+                    .executes(context -> findShip(context.getSource())))
             .then(Commands.literal("list")
                 .executes(context -> listShips(context.getSource())))
             .then(Commands.literal("tp")
@@ -125,7 +129,7 @@ public class ShipCommands {
         }
 
         SpaceshipManager manager = SpaceshipManager.get(level);
-        Ship ship = findShipAtPosition(manager, player.blockPosition());
+        Ship ship = manager.getShipByPosition(player.blockPosition());
 
         if (ship == null) {
             source.sendFailure(Component.literal("Could not determine which ship you are in"));
@@ -137,22 +141,22 @@ public class ShipCommands {
         return 1;
     }
 
-    public static Ship findShipAtPosition(SpaceshipManager manager, BlockPos pos) {
-        // Ships are spaced 1000 blocks apart, so we can determine which ship area we're in
-        int shipX = Math.floorDiv(pos.getX(), 1000) * 1000;
-        int shipZ = Math.floorDiv(pos.getZ(), 1000) * 1000;
+    private static int findShip(CommandSourceStack source) {
+        ServerLevel level = source.getLevel();
+        SpaceshipManager manager = SpaceshipManager.get(level);
 
-        if (manager.getShips().isEmpty()) {
-            System.out.println("No ships exist");
+        BlockPos pos = BlockPos.containing(source.getPosition());
+        Ship ship = manager.getShipByPosition(pos);
+
+        if (ship == null) {
+            source.sendFailure(Component.literal("Could not find ship at position" + pos));
+            return 0;
         }
 
-        for (Ship ship : manager.getShips().values()) {
-            BlockPos shipPos = ship.getDimensionLocation();
-            if (shipPos.getX() == shipX && shipPos.getZ() == shipZ) {
-                return ship;
-            }
-        }
+        ShipRoom room = ship.getRoomByWorldPos(pos);
 
-        return null;
+        source.sendSuccess(() ->
+                Component.literal("Ship #" + ship.getSimpleId() + " in room #" + room.getIndex()), true);
+        return 1;
     }
 }

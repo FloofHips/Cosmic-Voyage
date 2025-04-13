@@ -23,7 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
-public class LampuleBlock extends RodBlock {
+public class LampuleBlock extends RodBlock implements IShipLight {
     public static final MapCodec<LampuleBlock> CODEC = simpleCodec(LampuleBlock::new);
     public static final BooleanProperty LIT;
     public LampuleBlock(Properties p_154339_) {
@@ -48,9 +48,10 @@ public class LampuleBlock extends RodBlock {
         }
     }
     public void toggle(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
-        pLevel.setBlock(pPos, (BlockState)pState.cycle(LIT), 2);
-        playSound(pPlayer, pLevel, pPos, pState);
-        pLevel.gameEvent(pPlayer, (Boolean)pState.getValue(LIT) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
+        if(pState.getValue(LIT))
+            turnOff(pState, pLevel, pPos, pPlayer);
+        else
+            turnOn(pState, pLevel, pPos, pPlayer);
     }
     protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
         float f = (Boolean)pState.getValue(LIT) ? 0.6F : 1.0F;
@@ -67,5 +68,19 @@ public class LampuleBlock extends RodBlock {
 
     static {
         LIT = BlockStateProperties.LIT;
+    }
+
+    @Override
+    public void turnOn(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+        pLevel.setBlock(pPos, pState.setValue(LIT, true), 2);
+        playSound(pPlayer, pLevel, pPos, pState);
+        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
+    }
+
+    @Override
+    public void turnOff(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+        pLevel.setBlock(pPos, pState.setValue(LIT, false), 2);
+        playSound(pPlayer, pLevel, pPos, pState);
+        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_DEACTIVATE, pPos);
     }
 }

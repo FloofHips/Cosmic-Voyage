@@ -28,20 +28,13 @@ public class TeleportUtil {
         if (shipDimension == null) {
             return;
         }
-
-        // Store the return position
         storeReturnPosition(player, ship);
-
-        // Play departure effects
         playTeleportEffects(sourceLevel, player.position(), true);
-
-        // Teleport player to ship
         Vec3 targetPos = Vec3.atBottomCenterOf(ship.getDimensionLocation());
         player.teleportTo(shipDimension, 
             targetPos.x+25, targetPos.y-26, targetPos.z+8.5,
             90, 0);
 
-        // Play arrival effects (in the ship dimension)
         playTeleportEffects(shipDimension, targetPos, false);
     }
 
@@ -52,18 +45,10 @@ public class TeleportUtil {
             returnPos = Vec3.atBottomCenterOf(overworld.getSharedSpawnPos());
         }
 
-        // Play departure effects
-        //playTeleportEffects(shipDimension, player.position(), true);
-        
-        // Teleport back to overworld
         player.teleportTo(overworld,
             returnPos.x, returnPos.y, returnPos.z,
             player.getYRot(), player.getXRot());
 
-        // Play arrival effects
-        //playTeleportEffects(overworld, returnPos, false);
-
-        // Clear return position
         clearReturnPosition(player, ship);
     }
 

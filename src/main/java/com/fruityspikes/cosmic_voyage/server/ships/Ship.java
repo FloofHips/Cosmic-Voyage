@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.ships;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,12 +20,13 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 public class Ship {
-    ResourceLocation structureLocation = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "main_ship_room_base");
     private final UUID id;
     private final int simpleId;
     private BlockPos entityLocation;
     private final BlockPos dimensionLocation;
     private ResourceLocation dimension;
+    public final ShipRoom[] rooms = new ShipRoom[25];
+
 
     public Ship(UUID id, int simpleId, BlockPos entityLocation, BlockPos dimensionLocation, ResourceLocation dimension) {
         this.id = id;
@@ -32,6 +34,9 @@ public class Ship {
         this.entityLocation = entityLocation;
         this.dimensionLocation = dimensionLocation;
         this.dimension = dimension;
+        for (int i = 0; i < 25; i++) {
+            rooms[i] = new ShipRoom(i, dimensionLocation);
+        }
     }
 
     public UUID getId() {
@@ -61,7 +66,30 @@ public class Ship {
     public void setDimension(ResourceLocation dimension) {
         this.dimension = dimension;
     }
+    public ShipRoom getRoom(int index) {
+        if (index < 0 || index >= 25) {
+            return null;
+        }
+        return rooms[index];
+    }
+    public ShipRoom getRoomByRelativePos(int relX, int relZ) {
+        if (relX < 0 || relX >= 80 || relZ < 0 || relZ >= 80) {
+            return null;
+        }
 
+        int roomX = relX / 16;
+        int roomZ = relZ / 16;
+        int roomIndex = roomZ * 5 + roomX;
+
+        return getRoom(roomIndex);
+    }
+
+    public ShipRoom getRoomByWorldPos(BlockPos worldPos) {
+        BlockPos shipPos = getDimensionLocation();
+        int relX = worldPos.getX() - shipPos.getX();
+        int relZ = worldPos.getZ() - shipPos.getZ();
+        return getRoomByRelativePos(relX, relZ);
+    }
     public void save(CompoundTag tag) {
         tag.putUUID("id", id);
         tag.putInt("simpleId", simpleId);
@@ -91,25 +119,30 @@ public class Ship {
         return new Ship(id, simpleId, entityLocation, dimensionLocation, dimension);
     }
 
-    // Get the spawn position inside the ship (center of the 3x3 chunk area)
     public BlockPos getSpawnPosition() {
-        return dimensionLocation.offset(24, 1, 24); // Center of the 3x3 chunk area, 1 block above floor
+        return dimensionLocation.offset(24, 1, 24);
     }
 
-    public void initializeStructure(ServerLevel level) {
-         StructureTemplateManager templateManager = level.getServer().getStructureManager();
-         StructureTemplate template = templateManager.getOrCreate(structureLocation);
+    public void initializeShip(ServerLevel level) {
+         this.generateDoorWays(level);
+         this.rooms[2].activateInitialRoom(level);
+    }
+    public void generateDoorWays(ServerLevel level) {
+        BlockState doorMaterial = Blocks.GLASS.defaultBlockState();
+        for (ShipRoom room: rooms) {
+            BlockPos pos = room.getDimensionLocation().offset(0, -28, 0);
+            for (Direction direction : Direction.Plane.HORIZONTAL){
+                for (int height = 0; height < 3; height++) {
+                    for (int width = 0; width < 2; width++) {
 
-         BlockPos startPosition = dimensionLocation.offset(-1, -34, -1);
-         StructurePlaceSettings settings = new StructurePlaceSettings() // Adjust settings as needed
-                 .setRotation(Rotation.NONE);
-         template.placeInWorld(level, startPosition, startPosition, settings, level.random, 2);
+                        if (direction.getAxis() == Direction.Axis.X) {
+                            pos = pos.offset(0, -1 + height, width);
+                        } else {
+                            pos = pos.offset(width, -1 + height, 0);
+                        }
 
-        for (int y = 0; y < 4; y++) {
-            for (int z = 0; z < 4; z++) {
-                for (int x = 0; x < 12; x++) {
-
-                    level.setBlock(startPosition.offset(x+17,y+7,z+7), Blocks.AIR.defaultBlockState(), 20);
+                        level.setBlock(pos, doorMaterial, 3);
+                    }
                 }
             }
         }

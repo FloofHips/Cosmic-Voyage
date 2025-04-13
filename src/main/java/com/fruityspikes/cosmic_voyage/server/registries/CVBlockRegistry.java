@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 public class CVBlockRegistry {
 
@@ -85,6 +86,13 @@ public class CVBlockRegistry {
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
             .sound(SoundType.NETHERITE_BLOCK)
+    );
+    public static final DeferredBlock<Block> LIGHT_BOARD = registerBlock("light_board", Block::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOL)
+            .requiresCorrectToolForDrops()
+            .strength(1.5F, 6.0F)
+            .sound(SoundType.NETHERITE_BLOCK)
+            .lightLevel(b -> 5)
     );
     public static final DeferredBlock<Block> PLEXIGLASS = registerSpecial("plexiglass", () -> new StainedGlassBlock(DyeColor.YELLOW, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)

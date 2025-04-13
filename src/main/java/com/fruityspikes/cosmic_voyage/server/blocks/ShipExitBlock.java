@@ -31,10 +31,13 @@ public class ShipExitBlock extends Block implements Portal {
     public void stepOn(Level pLevel, BlockPos pPos, BlockState pState, Entity pEntity) {
         super.stepOn(pLevel, pPos, pState, pEntity);
         SpaceshipManager manager;
+        pPos = pPos.offset(0,0,16);
         if(pLevel instanceof ServerLevel serverLevel && pEntity instanceof ServerPlayer player){
+
             manager = SpaceshipManager.get(serverLevel);
-            Ship ship = ShipCommands.findShipAtPosition(manager, pEntity.blockPosition());
-            TeleportUtil.exitShip(player, ship, serverLevel);
+            Ship ship = manager.getShipByPosition(pPos);
+            if(ship!=null)
+                TeleportUtil.exitShip(player, ship, serverLevel);
         }
     }
 
