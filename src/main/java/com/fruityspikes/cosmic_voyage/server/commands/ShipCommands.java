@@ -156,7 +156,7 @@ public class ShipCommands {
         ShipRoom room = ship.getRoomByWorldPos(pos);
 
         source.sendSuccess(() ->
-                Component.literal("Ship #" + ship.getSimpleId() + " in room #" + room.getIndex()), true);
+                Component.literal("Ship #" + ship.getSimpleId() + " in room #" + room.getIndex() + " with position: " + room.getDimensionLocation()), true);
         return 1;
     }
 }

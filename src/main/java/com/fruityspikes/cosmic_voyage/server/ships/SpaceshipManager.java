@@ -66,7 +66,7 @@ public class SpaceshipManager extends SavedData {
         return spaceshipDimension.getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(
                         SpaceshipManager::new,
-                        (tag, provider) -> SpaceshipManager.load(tag),
+                        (tag, provider) -> SpaceshipManager.load(tag, level),
                         DataFixTypes.LEVEL
                 ),
                 SAVED_DATA_NAME
@@ -159,15 +159,25 @@ public class SpaceshipManager extends SavedData {
         this.setDirty();
     }
 
-    private static SpaceshipManager load(CompoundTag tag) {
+    private static SpaceshipManager load(CompoundTag tag, ServerLevel level) {
         SpaceshipManager manager = new SpaceshipManager();
-        
+        ServerLevel targetLevel = level.getServer().getLevel(SpaceshipDimension.DIMENSION_KEY);
+        if (targetLevel == null) {
+            targetLevel = level;
+        }
+
         if (tag.contains("ships")) {
             ListTag shipsList = tag.getList("ships", 10);
             shipsList.forEach(shipTag -> {
-                Ship ship = Ship.load((CompoundTag) shipTag);
+                Ship ship = Ship.load((CompoundTag) shipTag, level);
                 manager.ships.put(ship.getId(), ship);
                 manager.simpleIdToUuid.put(ship.getSimpleId(), ship.getId());
+
+                for (ShipRoom room : ship.rooms) {
+                    if (room != null && room.isActive()) {
+                        room.setActive(true);
+                    }
+                }
             });
         }
         

@@ -7,6 +7,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -43,33 +44,14 @@ public class LampuleBlock extends RodBlock implements IShipLight {
     }
 
     @Override
-    protected void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
-        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
-        if (!pLevel.isClientSide) {
-            SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
-            Ship ship = manager.getShipByPosition(pPos);
-            if (ship != null) {
-                ShipRoom room = ship.getRoomByWorldPos(pPos);
-                if (room != null) {
-                    room.addLight(pState, pPos, pLevel);
-                }
-            }
-        }
-    }
-
-    @Override
     protected void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
-        if (!pLevel.isClientSide) {
-            SpaceshipManager manager = SpaceshipManager.get((ServerLevel) pLevel);
-            Ship ship = manager.getShipByPosition(pPos);
-            if (ship != null) {
-                ShipRoom room = ship.getRoomByWorldPos(pPos);
-                if (room != null) {
-                    room.removeLight(pState, pPos, pLevel);
-                }
-            }
-        }
+        onRemove(pState, pLevel, pPos);
+    }
+    @Override
+    protected void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+        onPlace(pState, pLevel, pPos);
     }
 
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
@@ -83,14 +65,11 @@ public class LampuleBlock extends RodBlock implements IShipLight {
     }
     public void toggle(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
         if(pState.getValue(LIT))
-            turnOff(pState, pLevel, pPos, pPlayer);
+            turnOff(pState, pLevel, pPos, pPlayer, turnOnSound);
         else
-            turnOn(pState, pLevel, pPos, pPlayer);
+            turnOn(pState, pLevel, pPos, pPlayer, turnOffSound);
     }
-    protected static void playSound(@Nullable Player pPlayer, LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
-        float f = (Boolean)pState.getValue(LIT) ? 0.6F : 1.0F;
-        pLevel.playSound(pPlayer, pPos, SoundEvents.VAULT_ACTIVATE, SoundSource.BLOCKS, 0.6F, f);
-    }
+
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(new Property[]{FACING, LIT});
     }
@@ -105,16 +84,16 @@ public class LampuleBlock extends RodBlock implements IShipLight {
     }
 
     @Override
-    public void turnOn(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+    public void turnOn(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer, SoundEvent pSound) {
         pLevel.setBlock(pPos, pState.setValue(LIT, true), 2);
-        playSound(pPlayer, pLevel, pPos, pState);
+        playSound(pPlayer, pLevel, pPos, pState, pSound);
         pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
     }
 
     @Override
-    public void turnOff(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer) {
+    public void turnOff(BlockState pState, Level pLevel, BlockPos pPos, @Nullable Player pPlayer, SoundEvent pSound) {
         pLevel.setBlock(pPos, pState.setValue(LIT, false), 2);
-        playSound(pPlayer, pLevel, pPos, pState);
+        playSound(pPlayer, pLevel, pPos, pState, pSound);
         pLevel.gameEvent(pPlayer, GameEvent.BLOCK_DEACTIVATE, pPos);
     }
 }

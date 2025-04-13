@@ -101,9 +101,17 @@ public class Ship {
         tag.putInt("dimensionY", dimensionLocation.getY());
         tag.putInt("dimensionZ", dimensionLocation.getZ());
         tag.putString("dimension", dimension.toString());
+
+        CompoundTag roomsTag = new CompoundTag();
+        for (int i = 0; i < rooms.length; i++) {
+            if (rooms[i] != null) {
+                roomsTag.put("room_" + i, rooms[i].save());
+            }
+        }
+        tag.put("rooms", roomsTag);
     }
 
-    public static Ship load(CompoundTag tag) {
+    public static Ship load(CompoundTag tag, ServerLevel level) {
         UUID id = tag.getUUID("id");
         int simpleId = tag.getInt("simpleId");
         BlockPos entityLocation = new BlockPos(
@@ -117,7 +125,19 @@ public class Ship {
             tag.getInt("dimensionZ")
         );
         ResourceLocation dimension = ResourceLocation.tryParse(tag.getString("dimension"));
-        return new Ship(id, simpleId, entityLocation, dimensionLocation, dimension);
+        Ship ship = new Ship(id, simpleId, entityLocation, dimensionLocation, dimension);
+
+        if (tag.contains("rooms")) {
+            CompoundTag roomsTag = tag.getCompound("rooms");
+            for (int i = 0; i < ship.rooms.length; i++) {
+                String roomKey = "room_" + i;
+                if (roomsTag.contains(roomKey)) {
+                    ship.rooms[i] = ShipRoom.load(roomsTag.getCompound(roomKey), level);
+                }
+            }
+        }
+
+        return ship;
     }
 
     public BlockPos getSpawnPosition() {
