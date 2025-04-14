@@ -43,7 +43,7 @@ public interface IShipLight {
             if (ship != null) {
                 ShipRoom room = ship.getRoomByWorldPos(pPos);
                 if (room != null) {
-                    room.removeLight(pState, pPos, pLevel);
+                    room.removeLight(pPos);
                 }
             }
         }
@@ -55,7 +55,7 @@ public interface IShipLight {
             if (ship != null) {
                 ShipRoom room = ship.getRoomByWorldPos(pPos);
                 if (room != null) {
-                    room.addLight(pState, pPos, pLevel);
+                    room.addLight(pPos);
                 }
             }
         }

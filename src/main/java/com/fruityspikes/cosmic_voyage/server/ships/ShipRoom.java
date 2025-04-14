@@ -33,11 +33,11 @@ public class ShipRoom {
     static TagKey<Block> LIGHT_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("cosmic_voyage", "ship_lights"));
     public boolean isActive;
     public BlockPos dimensionLocation;
-    private final Map<BlockPos, LightEntry> shipLights = new HashMap<>();
+    ArrayList<BlockPos> shipLights = new ArrayList<BlockPos>();
     public ShipRoom(int index, BlockPos dimensionLocation) {
         this.index = index;
         this.isActive = false;
-        this.dimensionLocation = dimensionLocation.offset(getGridX() * 16,0,getGridZ() * 16);
+        this.dimensionLocation = dimensionLocation;
     }
     public int getIndex() {
         return index;
@@ -79,20 +79,18 @@ public class ShipRoom {
         tag.putInt("dimensionZ", dimensionLocation.getZ());
 
         ListTag lightsList = new ListTag();
-        for (BlockPos pos : shipLights.keySet()) {
+        for (BlockPos pos : shipLights) {
             CompoundTag lightTag = new CompoundTag();
             lightTag.putLong("pos", pos.asLong());
             lightsList.add(lightTag);
         }
         tag.put("lights", lightsList);
-        CosmicVoyage.LOGGER.info("Saved {} lights for room [{}]", lightsList.size(), index);
         return tag;
     }
 
     public static ShipRoom load(CompoundTag tag, ServerLevel level) {
         int index = tag.getInt("index");
         boolean active = tag.getBoolean("active");
-        //CosmicVoyage.LOGGER.info("Loading ShipRoom [{}] - Active: {}", index, active);
 
         BlockPos dimensionLocation = new BlockPos(
                 tag.getInt("dimensionX"),
@@ -106,86 +104,60 @@ public class ShipRoom {
 
         if (tag.contains("lights")) {
             ListTag lightsList = tag.getList("lights", 10);
-            //CosmicVoyage.LOGGER.info("Room [{}] has {} lights in NBT", index, lightsList.size());
-
-            int loadedLights = 0;
             for (int i = 0; i < lightsList.size(); i++) {
-                CompoundTag lightTag = lightsList.getCompound(i);
-                BlockPos pos = BlockPos.of(lightTag.getLong("pos"));
-
-                if (level.isLoaded(pos)) {
-                    BlockState state = level.getBlockState(pos);
-                    if (state.is(LIGHT_TAG)) {
-                        room.addLight(state, pos, level);
-                        loadedLights++;
-                    }
-                } else {
-                    //CosmicVoyage.LOGGER.warn("Chunk not loaded for light at {} in room [{}]", pos, index);
-                }
+                room.shipLights.add(BlockPos.of(lightsList.getCompound(i).getLong("pos")));
             }
-            //CosmicVoyage.LOGGER.info("Loaded {}/{} lights for room [{}]", loadedLights, lightsList.size(), index);
-        } else {
-            //CosmicVoyage.LOGGER.info("Room [{}] has no lights saved", index);
         }
 
         return room;
     }
-    public void addLight(BlockState state, BlockPos pos, Level level) {
-        if (!shipLights.containsKey(pos) && state.is(LIGHT_TAG)) {
-            shipLights.put(pos, new LightEntry(state, pos, level));
+    public void addLight(BlockPos pos) {
+        if (!shipLights.contains(pos)) {
+            shipLights.add(pos);
         }
     }
-    public void removeLight(BlockState blockState, BlockPos pos, Level level){
-        LightEntry lightEntry = shipLights.get(pos);
-        if(lightEntry!=null)
+    public void removeLight(BlockPos pos){
             shipLights.remove(pos);
     }
-    public void turnOnLights(){
-        if (shipLights.isEmpty()) return;
+    public void turnOnLights(Level pLevel){
+        if (shipLights.isEmpty()){
+            return;
+        }
+        List<BlockPos> lightsCopy = new ArrayList<>(shipLights);
+        lightsCopy.sort((a, b) -> Integer.compare(b.getY(), a.getY()));
 
-        List<LightEntry> lightsCopy = new ArrayList<>(shipLights.values());
-        lightsCopy.sort((a, b) -> Integer.compare(b.pos.getY(), a.pos.getY()));
-
-        System.out.println(lightsCopy);
-
-        ServerLevel serverLevel = (ServerLevel)lightsCopy.get(0).level;
-        long currentTick = serverLevel.getGameTime();
-
-        for (int i = 0; i < lightsCopy.size(); i++) {
-            LightEntry entry = lightsCopy.get(i);
-            int delayTicks = i+5;
-
-            //serverLevel.getServer().execute(() -> {
-                //if (serverLevel.getGameTime() >= currentTick + delayTicks) {
-                    BlockState state = entry.level.getBlockState(entry.pos);
-                    if (state.is(LIGHT_TAG) && state.getBlock() instanceof IShipLight lightBlock) {
-                        lightBlock.turnOn(state, entry.level, entry.pos, null, lightBlock.getTurnOnSound());
-                    }
-                //}
-            //});
+        for (BlockPos pos : lightsCopy) {
+            BlockState state = pLevel.getBlockState(pos);
+            if (state.getBlock() instanceof IShipLight lightBlock) {
+                lightBlock.turnOn(state, pLevel, pos, null, lightBlock.getTurnOnSound());
+            }
         }
     }
 
-    public void turnOffLights() {
-        if (shipLights.isEmpty()) return;
+    public void turnOffLights(Level pLevel){
+        if (shipLights.isEmpty()){
+            System.out.println("empty!");
+            return;
+        }
 
-        List<LightEntry> lightsCopy = new ArrayList<>(shipLights.values());
-        lightsCopy.sort((a, b) -> Integer.compare(b.pos.getY(), a.pos.getY()));
+        //this.scanForLightBlocks(pLevel, dimensionLocation, dimensionLocation);
 
-        ServerLevel serverLevel = (ServerLevel)lightsCopy.get(0).level;
-        long currentTick = serverLevel.getGameTime();
+        List<BlockPos> lightsCopy = new ArrayList<>(shipLights);
+        lightsCopy.sort((a, b) -> Integer.compare(b.getY(), a.getY()));
+
+        long currentTick = pLevel.getGameTime();
 
         for (int i = 0; i < lightsCopy.size(); i++) {
-            LightEntry entry = lightsCopy.get(i);
+            BlockPos pos = lightsCopy.get(i);
             int delayTicks = i+5;
 
             //serverLevel.getServer().execute(() -> {
-                //if (serverLevel.getGameTime() >= currentTick + delayTicks) {
-                    BlockState state = entry.level.getBlockState(entry.pos);
-                    if (state.is(LIGHT_TAG) && state.getBlock() instanceof IShipLight lightBlock) {
-                        lightBlock.turnOff(state, entry.level, entry.pos, null, lightBlock.getTurnOffSound());
-                    }
-                //}
+            if (pLevel instanceof ServerLevel serverLevel) {
+                BlockState state = serverLevel.getBlockState(pos);
+                if (state.is(LIGHT_TAG) && state.getBlock() instanceof IShipLight lightBlock) {
+                    lightBlock.turnOff(state, serverLevel, pos, null, lightBlock.getTurnOffSound());
+                }
+            }
             //});
         }
     }
@@ -248,8 +220,8 @@ public class ShipRoom {
     public void reactivateRoom(ServerLevel level) {
         if (!isActive) {
             isActive = true;
-            shipLights.clear();
-            scanForLightBlocks(level, dimensionLocation.offset(0, -14, 0), dimensionLocation.offset(16,26,16));
+            //shipLights.clear();
+            //scanForLightBlocks(level, dimensionLocation.offset(0, -14, 0), dimensionLocation.offset(16,26,16));
         }
     }
     private void scanForLightBlocks(ServerLevel level, BlockPos startPos, Vec3i size) {
@@ -260,7 +232,7 @@ public class ShipRoom {
                     BlockState state = level.getBlockState(worldPos);
 
                     if (state.is(LIGHT_TAG)){
-                        this.addLight(state, worldPos, level);
+                        this.addLight(worldPos);
                     }
                 }
             }

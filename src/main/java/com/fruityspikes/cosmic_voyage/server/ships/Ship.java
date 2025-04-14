@@ -36,7 +36,7 @@ public class Ship {
         this.dimensionLocation = dimensionLocation;
         this.dimension = dimension;
         for (int i = 0; i < 25; i++) {
-            rooms[i] = new ShipRoom(i, dimensionLocation);
+            rooms[i] = new ShipRoom(i, dimensionLocation.offset((i % 5) * 16,0,(i / 5) * 16));
         }
     }
 
@@ -138,10 +138,6 @@ public class Ship {
         }
 
         return ship;
-    }
-
-    public BlockPos getSpawnPosition() {
-        return dimensionLocation.offset(24, 1, 24);
     }
 
     public void initializeShip(ServerLevel level) {

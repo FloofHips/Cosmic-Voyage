@@ -117,10 +117,6 @@ public class ShipRoomGateBlock extends Block {
             int newIndex = getAdjacentRoomIndex(currentIndex, lastHitFace);
 
             if(newIndex != -1) {
-                System.out.println(currentIndex);
-                System.out.println(ship.getRoom(currentIndex).getIndex());
-                System.out.println(ship.getRoom(currentIndex).dimensionLocation);
-
                 ship.getRoom(newIndex).activateRoom(level);
                 activateConnectingHallways(level, ship, newIndex);
             }

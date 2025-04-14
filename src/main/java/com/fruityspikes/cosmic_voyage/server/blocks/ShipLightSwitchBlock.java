@@ -41,7 +41,7 @@ public class ShipLightSwitchBlock extends HorizontalDirectionalBlock {
         return null;
     }
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
     }
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
         if (pLevel.isClientSide) {
@@ -60,9 +60,9 @@ public class ShipLightSwitchBlock extends HorizontalDirectionalBlock {
             ShipRoom room = ship.getRoomByWorldPos(pPos);
             if (room != null) {
                 if (pState.getValue(UP)) {
-                    room.turnOnLights();
+                    room.turnOnLights(pLevel);
                 } else {
-                    room.turnOffLights();
+                    room.turnOffLights(pLevel);
                 }
             }
         }

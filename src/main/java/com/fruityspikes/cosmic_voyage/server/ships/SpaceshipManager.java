@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SpaceshipManager extends SavedData {
-    private SpaceshipManager instance;
     private static final String SAVED_DATA_NAME = CosmicVoyage.MODID + "_spaceships";
     private static final Logger LOGGER = LogUtils.getLogger();
     
@@ -34,8 +33,8 @@ public class SpaceshipManager extends SavedData {
     private int nextShipDimensionX = 0;
     private int nextShipDimensionZ = 0;
     private int nextSimpleId = 1;
-    private static final int SHIP_SPACING = 1000; // Blocks between ships in spaceship dimension
-    private static final int SHIP_SIZE = 48; // 3 chunks = 48 blocks
+    private static final int SHIP_SPACING = 1000; // blocks between ships in spaceship dimension
+    private static final int SHIP_SIZE = 80;
 
     public SpaceshipManager() {
         super();
