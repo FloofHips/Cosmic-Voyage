@@ -247,6 +247,6 @@
       "type": "minecraft:multi_noise"
     },
     "settings": "cosmic_voyage:venus",
-    "type": "minecraft:noise"
+    "type": "cosmic_voyage:venus"
   }
 }

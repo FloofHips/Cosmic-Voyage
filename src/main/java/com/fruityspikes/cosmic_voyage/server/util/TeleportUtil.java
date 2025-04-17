@@ -32,7 +32,7 @@ public class TeleportUtil {
         playTeleportEffects(sourceLevel, player.position(), true);
         Vec3 targetPos = Vec3.atBottomCenterOf(ship.getDimensionLocation());
         player.teleportTo(shipDimension, 
-            targetPos.x+25, targetPos.y-26, targetPos.z+8.5,
+            targetPos.x+25+16, targetPos.y-26, targetPos.z+8.5+16,
             90, 0);
 
         playTeleportEffects(shipDimension, targetPos, false);

@@ -1,6 +1,7 @@
 package com.fruityspikes.cosmic_voyage;
 
 import com.fruityspikes.cosmic_voyage.client.client_registries.CVModelLayers;
+import com.fruityspikes.cosmic_voyage.client.gui.HelmGui;
 import com.fruityspikes.cosmic_voyage.client.models.ShipModel;
 import com.fruityspikes.cosmic_voyage.client.renderers.AcidRenderer;
 import com.fruityspikes.cosmic_voyage.client.renderers.ShipRenderer;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -109,6 +111,7 @@ public class CosmicVoyage
         CVFeatureRegistry.FEATURES.register(modEventBus);
         CVPlacementModifierTypes.PLACEMENT_MODIFIERS.register(modEventBus);
         CVItemRegistry.ITEMS.register(modEventBus);
+        CVMenus.MENUS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
 
         CVBlockRegistry.registerFluids();
@@ -162,6 +165,10 @@ public class CosmicVoyage
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
+        @SubscribeEvent
+        public static void registerScreens(RegisterMenuScreensEvent event) {
+            event.register(CVMenus.HELM.get(), HelmGui::new);
+        }
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {

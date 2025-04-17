@@ -124,7 +124,7 @@ public class CVBlockRegistry {
             .strength(1.5F, 6.0F)
             .sound(SoundType.NETHERITE_BLOCK)
     );
-    public static final DeferredBlock<Block> HELM = registerBlock("helm", Block::new, BlockBehaviour.Properties.of()
+    public static final DeferredBlock<Block> HELM = registerBlock("helm", HelmBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WOOL)
             .requiresCorrectToolForDrops()
             .strength(1.5F, 6.0F)
