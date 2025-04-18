@@ -9,6 +9,8 @@ import com.fruityspikes.cosmic_voyage.data.CVBlockstateGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModelGen;
 import com.fruityspikes.cosmic_voyage.data.CVLangGen;
 import com.fruityspikes.cosmic_voyage.server.commands.ShipCommands;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObjectManager;
+import com.fruityspikes.cosmic_voyage.server.events.NeoforgeEvents;
 import com.fruityspikes.cosmic_voyage.server.registries.*;
 import com.fruityspikes.cosmic_voyage.server.util.CVConstants;
 import com.mojang.blaze3d.shaders.FogShape;
@@ -55,6 +57,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 import static com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry.SHIP;
@@ -68,6 +71,15 @@ public class CosmicVoyage
     public static final String MODID = "cosmic_voyage";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    @Nullable
+    private static CelestialObjectManager celestialObjectManager;
+
+    public static CelestialObjectManager getCelestialObjectManager() {
+        if(celestialObjectManager==null)
+            return new CelestialObjectManager();
+        return celestialObjectManager;
+    }
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -125,7 +137,7 @@ public class CosmicVoyage
         NeoForge.EVENT_BUS.register(this);
 
         modEventBus.addListener(this::addCreative);
-
+        NeoForge.EVENT_BUS.register(new NeoforgeEvents());
         //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 

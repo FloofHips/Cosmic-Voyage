@@ -1,6 +1,7 @@
 package com.fruityspikes.cosmic_voyage.server.ships;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObjectManager;
 import com.fruityspikes.cosmic_voyage.server.dimension.SpaceshipDimension;
 import com.fruityspikes.cosmic_voyage.server.entities.ShipEntity;
 import com.fruityspikes.cosmic_voyage.server.registries.CVEntityRegistry;
@@ -20,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,7 +37,6 @@ public class SpaceshipManager extends SavedData {
     private int nextSimpleId = 1;
     private static final int SHIP_SPACING = 1000; // blocks between ships in spaceship dimension
     private static final int SHIP_SIZE = 80;
-
     public SpaceshipManager() {
         super();
     }

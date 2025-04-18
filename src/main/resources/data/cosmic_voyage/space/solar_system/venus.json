@@ -1,0 +1,18 @@
+{
+  "name": "cosmic_voyage:venus",
+
+  "parent": "cosmic_voyage:solar_system/sun",
+  "eccentricity": 0.007,
+  "max_distance_from_parent": 108.7,
+
+  "orbit_period": 224.7,
+  "length_of_day": 2802,
+
+  "diameter": 12104,
+  "mass": 487,
+
+  "dimension_id": "cosmic_voyage:venus"
+}
+
+
+
