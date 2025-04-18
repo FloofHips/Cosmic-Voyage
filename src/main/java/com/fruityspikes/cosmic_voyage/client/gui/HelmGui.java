@@ -2,37 +2,30 @@ package com.fruityspikes.cosmic_voyage.client.gui;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.fruityspikes.cosmic_voyage.server.menus.HelmMenu;
-import com.fruityspikes.cosmic_voyage.server.ships.Ship;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
-import java.util.Iterator;
 
 @OnlyIn(Dist.CLIENT)
 public class HelmGui extends AbstractContainerScreen<HelmMenu> {
     ResourceLocation HELM_SHELL = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/gui/helm/helm_shell.png");
+    ResourceLocation SCREEN = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/gui/helm/helm_screen.png");
+    ResourceLocation BALL_OVERLAY = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/gui/helm/helm_ball_overlay.png");
     //public int leftPos;
     //public int topPos;
     public int imageWidth;
@@ -41,6 +34,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
     protected float rotation = 0;
     ThrottleSlider slider;
     BallMouse ball;
+    public boolean hasPower = true;
 
     public HelmGui(HelmMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -55,6 +49,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
 
         slider = (new ThrottleSlider(leftPos + 327, topPos + 226, 34, 18, Component.empty(), velocity));
         ball = (new BallMouse(leftPos + 360, topPos + 151, 96, 96, Component.empty(), rotation));
+
         addRenderableWidget(slider);
         addRenderableWidget(ball);
     }
@@ -64,7 +59,17 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
         this.minecraft.gameRenderer.processBlurEffect(i1);
         this.minecraft.getMainRenderTarget().bindWrite(false);
         //Orange Ball
-        guiGraphics.blit(HELM_SHELL, this.leftPos + 360, this.topPos + 151, 16*6, 256, 96, 96, 512, 512);
+        //background
+        guiGraphics.blit(HELM_SHELL, this.leftPos + 360, this.topPos + 151, 96, 256, 96, 96, 512, 512);
+        //overlay
+        guiGraphics.blit(BALL_OVERLAY, this.leftPos + 360, this.topPos + 151, (int) (-(rotation / 360f) * 160), 0, 96, 96, 160, 96);
+        //shading
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
+        guiGraphics.blit(HELM_SHELL, this.leftPos + 360, this.topPos + 151, 0, 256+96, 96, 96, 512, 512);
+        //Screen
+        renderScreen(guiGraphics);
         //Cover
         guiGraphics.blit(HELM_SHELL, this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight, 512, 512);
 
@@ -79,21 +84,35 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
 
             if (perspectiveFactor > 0.1) {
                 guiGraphics.pose().scale(1f, scaleY, 1f);
-                guiGraphics.blit(HELM_SHELL,
-                        0, -15,
-                        16*15+6, 256,
-                        6, 15,
-                        512, 512);
+                guiGraphics.blit(HELM_SHELL,0, -15,16*15+6, 256,6, 15,512, 512);
             } else if(perspectiveFactor < -0.2) {
                 guiGraphics.pose().scale(1f, scaleY, 1f);
-                guiGraphics.blit(HELM_SHELL,
-                        0, 0,
-                        16*15, 256,
-                        6, 15,
-                        512, 512);
+                guiGraphics.blit(HELM_SHELL,0, 0,16*15, 256,6, 15,512, 512);
             }
         }
         guiGraphics.pose().popPose();
+    }
+    public void renderScreen(GuiGraphics guiGraphics) {
+        if(hasPower){
+            //float pulse = (Minecraft.getInstance().level.getGameTime() % 40) / 40f;
+            RenderSystem.enableBlend();
+            guiGraphics.fill(this.leftPos + 19,this.topPos + 23,this.leftPos + 19 + 298,this.topPos + 23 + 210, -2779381);
+            guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 210, 298, 210, 1024, 512);
+            RenderSystem.disableBlend();
+            renderInvertedQuad(guiGraphics, SCREEN, this.leftPos + 19, this.topPos + 23, 298, 0, 298, 210, 1024, 512, -2779381);
+            renderMultiplicativeQuad(guiGraphics, SCREEN, this.leftPos + 19, this.topPos + 23, 298, 0, 298, 210, 1024, 512, -2779381);
+        }
+
+        float alpha = velocity / 100f;
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        guiGraphics.setColor(1f, 1f, 1f, alpha);
+        guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 0, 298, 210, 1024, 512);
+        guiGraphics.setColor(1f, 1f, 1f, 1f);
+
+
     }
 
     @Override
@@ -104,6 +123,11 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
     public void containerTick() {
         super.containerTick();
         this.helmTick();
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
+
     }
 
     public void helmTick() {
@@ -188,6 +212,49 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
 
     public boolean isPauseScreen() {
         return false;
+    }
+
+    public void renderInvertedQuad(GuiGraphics gui, ResourceLocation texture, int startx, int starty, int Uoffset, int Voffset, int width, int height, int texwidth, int texheight, int tintColor) {
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(
+                GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+        );
+
+//        float a = ((tintColor >> 24) & 0xFF) / 255f;
+//        float r = ((tintColor >> 16) & 0xFF) / 255f;
+//        float g = ((tintColor >> 8) & 0xFF) / 255f;
+//        float b = (tintColor & 0xFF) / 255f;
+//        RenderSystem.setShaderColor(r, g, b, a);
+
+        gui.blit(texture, startx, starty, Uoffset, Voffset, width, height, texwidth, texheight);
+
+        //RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.defaultBlendFunc();
+    }
+
+    public void renderMultiplicativeQuad(GuiGraphics gui, ResourceLocation texture, int startx, int starty, int Uoffset, int Voffset, int width, int height, int texwidth, int texheight, int tintColor) {
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(
+                GlStateManager.SourceFactor.DST_COLOR,
+                GlStateManager.DestFactor.ZERO,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+        );
+
+        float a = ((tintColor >> 24) & 0xFF) / 255f;
+        float r = ((tintColor >> 16) & 0xFF) / 255f;
+        float g = ((tintColor >> 8) & 0xFF) / 255f;
+        float b = (tintColor & 0xFF) / 255f;
+
+        RenderSystem.setShaderColor(r, g, b, a);
+
+        gui.blit(texture, startx, starty, Uoffset, Voffset, width, height, texwidth, texheight);
+
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.defaultBlendFunc();
     }
 
     class BallMouse extends AbstractWidget {
