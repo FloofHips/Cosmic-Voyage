@@ -1,5 +1,8 @@
 package com.fruityspikes.cosmic_voyage.server.commands;
 
+import com.fruityspikes.cosmic_voyage.CosmicVoyage;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObject;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObjectManager;
 import com.fruityspikes.cosmic_voyage.server.dimension.SpaceshipDimension;
 import com.fruityspikes.cosmic_voyage.server.ships.Ship;
 import com.fruityspikes.cosmic_voyage.server.ships.ShipRoom;
@@ -7,18 +10,27 @@ import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.fruityspikes.cosmic_voyage.server.util.TeleportUtil;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.awt.*;
-import java.util.Arrays;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShipCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("planet").requires(source -> source.hasPermission(2))
+                .then(Commands.literal("list")
+                        .executes(context -> listPlanets(context.getSource()))));
+
         dispatcher.register(Commands.literal("ship")
             .requires(source -> source.hasPermission(2))
             .then(Commands.literal("create")
@@ -157,6 +169,41 @@ public class ShipCommands {
 
         source.sendSuccess(() ->
                 Component.literal("Ship #" + ship.getSimpleId() + " in room #" + room.getIndex() + " with position: " + room.getDimensionLocation()), true);
+        return 1;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------//
+
+    private static int listPlanets(CommandSourceStack source) {
+        CelestialObjectManager manager = CosmicVoyage.getCelestialObjectManager();
+        Collection<CelestialObject> objects = manager.getAll();
+
+        if (objects.isEmpty()) {
+            source.sendSuccess(() -> Component.literal("No celestial objects loaded"), false);
+            return 0;
+        }
+
+        MutableComponent message = Component.literal("")
+                .append(Component.literal(String.format("Found %d celestial objects:\n", objects.size()))
+                        .withStyle(ChatFormatting.GOLD));
+
+        Map<Optional<ResourceLocation>, List<CelestialObject>> grouped = objects.stream()
+                .collect(Collectors.groupingBy(CelestialObject::getParent));
+
+        grouped.forEach((parent, children) -> {
+            String parentName = parent.map(ResourceLocation::toString).orElse("[Central Star]");
+            message.append(Component.literal("\n● " + parentName + ":\n")
+                    .withStyle(ChatFormatting.YELLOW));
+
+            children.forEach(obj -> {
+                message.append(Component.literal("  ├─ ")
+                        .append(Component.literal(obj.getName().toString())
+                                .append(Component.literal("\n"))
+                                .withStyle(ChatFormatting.AQUA)));
+            });
+        });
+
+        source.sendSuccess(() -> message, false);
         return 1;
     }
 }

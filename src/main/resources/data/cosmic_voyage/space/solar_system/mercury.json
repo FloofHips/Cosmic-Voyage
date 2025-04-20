@@ -1,0 +1,13 @@
+{
+  "name": "cosmic_voyage:mercury",
+  "parent": "cosmic_voyage:sun",
+  "average_distance_au": 0.3871,
+  "orbit_eccentricity": 0.2056,
+  "orbit_period_days": 87.969,
+  "closest_approach_angle": 77.5,
+  "diameter_km": 4879.0,
+  "mass_kg": 3.3011e23,
+  "day_length_hours": 1407.6,
+  "axial_tilt_degrees": 0.034,
+  "dimension": "cosmic_voyage:mercury"
+}

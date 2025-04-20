@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.blocks;
 
 import com.fruityspikes.cosmic_voyage.client.gui.HelmGui;
 import com.fruityspikes.cosmic_voyage.server.menus.HelmMenu;
+import com.fruityspikes.cosmic_voyage.server.menus.HelmMenuProvider;
 import com.fruityspikes.cosmic_voyage.server.ships.Ship;
 import com.fruityspikes.cosmic_voyage.server.ships.SpaceshipManager;
 import com.mojang.serialization.MapCodec;
@@ -38,15 +39,24 @@ public class HelmBlock extends Block {
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
         if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
-        } else {
-            pPlayer.openMenu(pState.getMenuProvider(pLevel, pPos));
-            return InteractionResult.CONSUME;
         }
-    }
 
-        protected MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
-        return new SimpleMenuProvider(
-                (containerId, playerInventory, player) -> new HelmMenu(containerId, playerInventory),
-                Component.empty());
+        if (pLevel instanceof ServerLevel serverLevel) {
+            SpaceshipManager manager = SpaceshipManager.get(serverLevel);
+            Ship ship = manager.getShipByPosition(pPos);
+
+            if (ship != null) {
+                pPlayer.openMenu(new HelmMenuProvider(
+                        pPos,
+                        ship.getSpacePosX(),
+                        ship.getSpacePosY(),
+                        ship.getSpaceRotation(),
+                        ship.getSpaceVelocity()
+                ));
+                return InteractionResult.CONSUME;
+            }
+        }
+        return InteractionResult.PASS;
     }
 }
+

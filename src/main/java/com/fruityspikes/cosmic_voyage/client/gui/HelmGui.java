@@ -1,7 +1,9 @@
 package com.fruityspikes.cosmic_voyage.client.gui;
 
 import com.fruityspikes.cosmic_voyage.CosmicVoyage;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObject;
 import com.fruityspikes.cosmic_voyage.server.menus.HelmMenu;
+import com.google.gson.JsonElement;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
@@ -15,11 +17,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class HelmGui extends AbstractContainerScreen<HelmMenu> {
@@ -30,11 +36,15 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
     //public int topPos;
     public int imageWidth;
     public int imageHeight;
-    protected float velocity = 0;
-    protected float rotation = 0;
+    protected float velocity;
+    protected float rotation;
+    protected int posX;
+    protected int posY;
     ThrottleSlider slider;
     BallMouse ball;
     public boolean hasPower = true;
+    public int shipTick = 0;
+    private Map<CelestialObject, Vec2> currentCelestialPositions;
 
     public HelmGui(HelmMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -42,6 +52,11 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
 
     @Override
     public void init() {
+        this.velocity = menu.getVelocity();
+        this.rotation = menu.getRotation();
+        this.posX = menu.getPosX();
+        this.posY = menu.getPosY();
+        //this.currentCelestialPositions = menu.getCurrentCelestialPositions();
         imageWidth = 464;
         imageHeight = 256;
         this.leftPos = (this.width - this.imageWidth) / 2;
@@ -73,6 +88,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
         //Cover
         guiGraphics.blit(HELM_SHELL, this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight, 512, 512);
 
+        //renderStarSystem(guiGraphics);
         guiGraphics.pose().pushPose();
         {
             int leverX = this.leftPos + 341;
@@ -91,6 +107,32 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
             }
         }
         guiGraphics.pose().popPose();
+        int posX = menu.getPosX();
+        int posY = menu.getPosY();
+
+        guiGraphics.drawString(
+                font,
+                String.format("Position: %d, %d", posX, posY),
+                leftPos + 20, topPos + 20,
+                0xFFFFFF,
+                false
+        );
+
+        guiGraphics.drawString(
+                font,
+                String.format("Rotation: %d°", menu.getRotation()),
+                leftPos + 20, topPos + 40,
+                0xFFFFFF,
+                false
+        );
+
+        guiGraphics.drawString(
+                font,
+                String.format("Velocity: %d%%", menu.getVelocity()),
+                leftPos + 20, topPos + 60,
+                0xFFFFFF,
+                false
+        );
     }
     public void renderScreen(GuiGraphics guiGraphics) {
         if(hasPower){
@@ -99,6 +141,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
             guiGraphics.fill(this.leftPos + 19,this.topPos + 23,this.leftPos + 19 + 298,this.topPos + 23 + 210, -2779381);
             guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 210, 298, 210, 1024, 512);
             RenderSystem.disableBlend();
+            renderStarSystem(guiGraphics);
             renderInvertedQuad(guiGraphics, SCREEN, this.leftPos + 19, this.topPos + 23, 298, 0, 298, 210, 1024, 512, -2779381);
             renderMultiplicativeQuad(guiGraphics, SCREEN, this.leftPos + 19, this.topPos + 23, 298, 0, 298, 210, 1024, 512, -2779381);
         }
@@ -108,12 +151,103 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        guiGraphics.setColor(1f, 1f, 1f, alpha);
+        guiGraphics.setColor(1f, 1f, 1f, 0);
         guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 0, 298, 210, 1024, 512);
         guiGraphics.setColor(1f, 1f, 1f, 1f);
-
-
     }
+
+    private void renderStarSystem(GuiGraphics guiGraphics) {
+        Collection<CelestialObject> objects = CosmicVoyage.getCelestialObjectManager().getAll();
+        Map<ResourceLocation, CelestialObject> allObjects = CosmicVoyage.getCelestialObjectManager().getObjectMap();
+        Map<CelestialObject, Vec2> positions = new HashMap<>();
+
+        float time = rotation;
+
+        for (CelestialObject obj : objects) {
+            positions.put(obj, obj.calculatePosition(time, allObjects));
+        }
+
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+
+        float scale = velocity + 50;
+
+        for (Map.Entry<CelestialObject, Vec2> entry : positions.entrySet()) {
+            CelestialObject obj = entry.getKey();
+            Vec2 position = entry.getValue();
+
+            int x = centerX + (int)(position.x * scale);
+            int y = centerY + (int)(position.y * scale);
+
+            // this is all dubious...
+            int size = (int)(Math.log(obj.getDiameter()) * 2 );
+            int scaledSize = (int) (size * scale/1000);
+
+            //do texture instead
+            guiGraphics.fill(x - scaledSize/2, y - scaledSize/2, x + scaledSize/2, y + scaledSize/2, -14467573);
+
+            //FOR DEBUGGING!!!!!!!!!!
+            guiGraphics.drawString(
+                        this.font,
+                        obj.getName().getPath(),
+                        x,
+                        y - this.font.lineHeight/2,
+                        0xFFFFFF
+                );
+        }
+
+        for (CelestialObject obj : positions.keySet()) {
+            if (obj.getParent().isPresent()) {
+                drawOrbit(guiGraphics, obj, centerX, centerY, scale);
+            }
+        }
+    }
+
+    private int getObjectColor(CelestialObject obj) {
+        if (obj.getName().getPath().contains("star")) {
+            return 0xFFFF00;
+        } else if (obj.getDiameter() > 10000) {
+            return 0x8888FF;
+        } else {
+            return 0xAAAAAA;
+        }
+    }
+
+    private void drawOrbit(GuiGraphics guiGraphics, CelestialObject obj, int centerX, int centerY, float scale) {
+        // FOR DEBUGGING ?? MAYBE ??
+        float a = obj.getAverageDistance() * scale;
+        float e = obj.getEccentricity();
+        float b = a * (float)Math.sqrt(1 - e*e);
+
+        int segments = 100;
+        int orbitColor = 0x44FFFFFF;
+
+        for (int i = 0; i < segments; i++) {
+            float angle1 = (float)(2 * Math.PI * i / segments);
+            float angle2 = (float)(2 * Math.PI * (i+1) / segments);
+
+            int x1 = centerX + (int)(a * Math.cos(angle1));
+            int y1 = centerY + (int)(b * Math.sin(angle1));
+            int x2 = centerX + (int)(a * Math.cos(angle2));
+            int y2 = centerY + (int)(b * Math.sin(angle2));
+
+            guiGraphics.hLine(x1, x2, y2, orbitColor);
+        }
+    }
+
+//    private void simulateSolarSystem(int shipTick) {
+//        double universeTimeDays = shipTick / 24000.0;
+//
+//        Collection<CelestialObject> objects = CosmicVoyage.getCelestialObjectManager().getAll();
+//        //System.out.println(objects.isEmpty());
+//
+//        Map<CelestialObject, Vec2> positions = new HashMap<>();
+//        for (CelestialObject obj : objects) {
+//            positions.put(obj, obj.calculatePosition(universeTimeDays));
+//        }
+//
+//        this.currentCelestialPositions = positions;
+//    }
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -131,10 +265,30 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
     }
 
     public void helmTick() {
+        shipTick++;
+
         slider.tick();
         ball.tick();
-        setRotation(ball.getCurrentRotation());
-        setVelocity(slider.getCurrentVelocity());
+
+        float newRotation = ball.getCurrentRotation();
+        float newVelocity = slider.getCurrentVelocity();
+        //this.simulateSolarSystem(shipTick);
+
+        if (newRotation != rotation || newVelocity != velocity) {
+            rotation = newRotation;
+            velocity = newVelocity;
+
+//            NetworkHandler.CHANNEL.sendToServer(
+//                    new UpdateShipControlsPacket(
+//                            menu.getShipId(),
+//                            (int)rotation,
+//                            (int)velocity
+//                    )
+//            );
+        }
+
+//        currentCelestialPositions = menu.getCurrentCelestialPositions();
+        //this.simulateSolarSystem(shipTick);
     }
 
     public void setRotation(float rotation) {

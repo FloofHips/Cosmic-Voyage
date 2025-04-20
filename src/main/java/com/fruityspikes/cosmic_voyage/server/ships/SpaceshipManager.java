@@ -18,6 +18,10 @@ import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.core.BlockPos;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -26,17 +30,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@EventBusSubscriber(modid = CosmicVoyage.MODID)
 public class SpaceshipManager extends SavedData {
     private static final String SAVED_DATA_NAME = CosmicVoyage.MODID + "_spaceships";
     private static final Logger LOGGER = LogUtils.getLogger();
     
-    private final Map<UUID, Ship> ships = new HashMap<>();
+    private static final Map<UUID, Ship> ships = new HashMap<>();
     private final Map<Integer, UUID> simpleIdToUuid = new HashMap<>();
     private int nextShipDimensionX = 0;
     private int nextShipDimensionZ = 0;
     private int nextSimpleId = 1;
     private static final int SHIP_SPACING = 1000; // blocks between ships in spaceship dimension
     private static final int SHIP_SIZE = 80;
+    private ServerLevel level;
     public SpaceshipManager() {
         super();
     }
@@ -186,5 +192,11 @@ public class SpaceshipManager extends SavedData {
         manager.nextSimpleId = tag.contains("nextSimpleId") ? tag.getInt("nextSimpleId") : 1;
         
         return manager;
+    }
+    @SubscribeEvent
+    public static void onServerTick(ServerTickEvent.Post event) {
+        for (Ship ship : ships.values()) {
+            ship.tick();
+        }
     }
 }

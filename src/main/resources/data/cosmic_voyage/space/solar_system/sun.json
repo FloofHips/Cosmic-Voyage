@@ -1,15 +1,13 @@
 {
   "name": "cosmic_voyage:sun",
 
-  "eccentricity": 0,
-  "max_distance_from_parent": 0,
+  "average_distance_au": 0.0,
+  "orbit_eccentricity": 0.0,
+  "orbit_period_days": 0.0,
+  "closest_approach_angle": 0.0,
 
-  "orbit_period": 0,
-  "length_of_day": 0,
-
-  "diameter": 12104,
-  "mass": 487
+  "diameter_km": 1392700.0,
+  "mass_kg": 1.989e30,
+  "day_length_hours": 648.0,
+  "axial_tilt_degrees": 7.25
 }
-
-
-

@@ -12,6 +12,7 @@ import com.fruityspikes.cosmic_voyage.server.commands.ShipCommands;
 import com.fruityspikes.cosmic_voyage.server.data.CelestialObjectManager;
 import com.fruityspikes.cosmic_voyage.server.events.NeoforgeEvents;
 import com.fruityspikes.cosmic_voyage.server.registries.*;
+import com.fruityspikes.cosmic_voyage.server.ships.Ship;
 import com.fruityspikes.cosmic_voyage.server.util.CVConstants;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -75,9 +76,14 @@ public class CosmicVoyage
     @Nullable
     private static CelestialObjectManager celestialObjectManager;
 
+    public static void setCelestialObjectManager(CelestialObjectManager manager) {
+        celestialObjectManager = manager;
+    }
+
     public static CelestialObjectManager getCelestialObjectManager() {
-        if(celestialObjectManager==null)
-            return new CelestialObjectManager();
+        if (celestialObjectManager == null) {
+            throw new IllegalStateException("CelestialObjectManager not initialized!");
+        }
         return celestialObjectManager;
     }
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
@@ -143,15 +149,7 @@ public class CosmicVoyage
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        //Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+        CosmicVoyage.setCelestialObjectManager(new CelestialObjectManager());
     }
 
     // Add the example block item to the building blocks tab

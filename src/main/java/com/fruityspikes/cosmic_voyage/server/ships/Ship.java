@@ -1,5 +1,8 @@
 package com.fruityspikes.cosmic_voyage.server.ships;
 
+import com.fruityspikes.cosmic_voyage.CosmicVoyage;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObject;
+import com.fruityspikes.cosmic_voyage.server.data.CelestialObjectManager;
 import com.fruityspikes.cosmic_voyage.server.registries.CVBlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,9 +10,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec2;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-
 public class Ship {
     private final UUID id;
     private final int simpleId;
@@ -17,7 +23,14 @@ public class Ship {
     private final BlockPos dimensionLocation;
     private ResourceLocation dimension;
     public final ShipRoom[] rooms = new ShipRoom[25];
-
+    private int localShipTime;
+    private int spacePosX;
+    private int spacePosY;
+    private int spaceRotation;
+    private int spaceVelocity;
+    private boolean parked;
+    private Collection<CelestialObject> celestialObjects;
+    private Map<CelestialObject, Vec2> currentCelestialPositions;
 
     public Ship(UUID id, int simpleId, BlockPos entityLocation, BlockPos dimensionLocation, ResourceLocation dimension) {
         this.id = id;
@@ -25,9 +38,13 @@ public class Ship {
         this.entityLocation = entityLocation;
         this.dimensionLocation = dimensionLocation;
         this.dimension = dimension;
+        this.localShipTime = 0;
+        this.parked = false;
         for (int i = 0; i < 25; i++) {
             rooms[i] = new ShipRoom(i, dimensionLocation.offset((i % 5) * 16,0,(i / 5) * 16));
         }
+        CelestialObjectManager celestialObjectManager = CosmicVoyage.getCelestialObjectManager();
+        celestialObjects = celestialObjectManager.getAll();
     }
 
     public UUID getId() {
@@ -57,6 +74,73 @@ public class Ship {
     public void setDimension(ResourceLocation dimension) {
         this.dimension = dimension;
     }
+
+    public int getLocalShipTime() {
+        return localShipTime;
+    }
+
+    public void setLocalShipTime(int localShipTime) {
+        this.localShipTime = localShipTime;
+    }
+
+    public boolean isParked() {
+        return parked;
+    }
+
+    public void setParked(boolean parked) {
+        this.parked = parked;
+    }
+
+    public int getSpacePosX() {
+        return spacePosX;
+    }
+
+    public void setSpacePosX(int spacePosX) {
+        this.spacePosX = spacePosX;
+    }
+
+    public int getSpacePosY() {
+        return spacePosY;
+    }
+
+    public void setSpacePosY(int spacePosY) {
+        this.spacePosY = spacePosY;
+    }
+
+    public int getSpaceRotation() {
+        return spaceRotation;
+    }
+
+    public void setSpaceRotation(int spaceRotation) {
+        this.spaceRotation = spaceRotation;
+    }
+
+    public int getSpaceVelocity() {
+        return spaceVelocity;
+    }
+
+    public void setSpaceVelocity(int spaceVelocity) {
+        this.spaceVelocity = spaceVelocity;
+    }
+
+    public void tick(){
+        this.localShipTime++;
+        this.simulateSolarSystem(localShipTime);
+    }
+
+    public void simulateSolarSystem(int localShipTime) {
+//        Map<CelestialObject, Vec2> positions = new HashMap<>();
+//
+//        for (CelestialObject obj : celestialObjects) {
+//            positions.put(obj, obj.calculatePosition(localShipTime, objects));
+//        }
+//        this.currentCelestialPositions = positions;
+    }
+
+    public Map<CelestialObject, Vec2> getCurrentCelestialPositions() {
+        return currentCelestialPositions;
+    }
+
     public ShipRoom getRoom(int index) {
         if (index < 0 || index >= 25) {
             return null;

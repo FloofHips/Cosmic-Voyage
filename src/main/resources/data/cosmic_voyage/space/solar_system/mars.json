@@ -1,0 +1,13 @@
+{
+  "name": "cosmic_voyage:mars",
+  "parent": "cosmic_voyage:sun",
+  "average_distance_au": 1.5237,
+  "orbit_eccentricity": 0.0934,
+  "orbit_period_days": 686.971,
+  "closest_approach_angle": 336.0,
+  "diameter_km": 6779.0,
+  "mass_kg": 6.417e23,
+  "day_length_hours": 24.7,
+  "axial_tilt_degrees": 25.19,
+  "dimension": "cosmic_voyage:mars"
+}
