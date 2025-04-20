@@ -135,8 +135,9 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
         );
     }
     public void renderScreen(GuiGraphics guiGraphics) {
+        guiGraphics.enableScissor(this.leftPos + 19,this.topPos + 23,this.leftPos + 19 + 298,this.topPos + 23 + 210);
+
         if(hasPower){
-            //float pulse = (Minecraft.getInstance().level.getGameTime() % 40) / 40f;
             RenderSystem.enableBlend();
             guiGraphics.fill(this.leftPos + 19,this.topPos + 23,this.leftPos + 19 + 298,this.topPos + 23 + 210, -2779381);
             guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 210, 298, 210, 1024, 512);
@@ -154,6 +155,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
         guiGraphics.setColor(1f, 1f, 1f, 0);
         guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 0, 298, 210, 1024, 512);
         guiGraphics.setColor(1f, 1f, 1f, 1f);
+        guiGraphics.disableScissor();
     }
 
     private void renderStarSystem(GuiGraphics guiGraphics) {
@@ -161,7 +163,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
         Map<ResourceLocation, CelestialObject> allObjects = CosmicVoyage.getCelestialObjectManager().getObjectMap();
         Map<CelestialObject, Vec2> positions = new HashMap<>();
 
-        float time = rotation;
+        float time = (float) shipTick / 50;
 
         for (CelestialObject obj : objects) {
             positions.put(obj, obj.calculatePosition(time, allObjects));

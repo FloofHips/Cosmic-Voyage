@@ -130,17 +130,17 @@ public class CelestialObject {
         double progress = (timeDays % orbitPeriod) / orbitPeriod;
         double meanAnomaly = progress * 2 * Math.PI;
 
-        double eccentricAnomaly = solveKeplersEquation(meanAnomaly, testeccentricity);
+        double eccentricAnomaly = solveKeplersEquation(meanAnomaly, eccentricity);
 
         double theta = 2 * Math.atan2(
-                Math.sqrt(1 + testeccentricity) * Math.sin(eccentricAnomaly / 2),
-                Math.sqrt(1 - testeccentricity) * Math.cos(eccentricAnomaly / 2)
+                Math.sqrt(1 + eccentricity) * Math.sin(eccentricAnomaly / 2),
+                Math.sqrt(1 - eccentricity) * Math.cos(eccentricAnomaly / 2)
         );
 
         theta += Math.toRadians(closestApproachAngle);
 
-        double distance = averageDistance * (1 - testeccentricity * testeccentricity)
-                / (1 + testeccentricity * Math.cos(theta));
+        double distance = averageDistance * (1 - eccentricity * eccentricity)
+                / (1 + eccentricity * Math.cos(theta));
 
         double x = parentPosition.x + (distance * Math.cos(theta));
         double y = parentPosition.y + (distance * Math.sin(theta));
