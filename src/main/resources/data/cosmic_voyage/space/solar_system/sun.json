@@ -7,7 +7,9 @@
   "closest_approach_angle": 0.0,
 
   "diameter_km": 1392700.0,
+  "size": 150,
   "mass_kg": 1.989e30,
   "day_length_hours": 648.0,
-  "axial_tilt_degrees": 7.25
+  "axial_tilt_degrees": 7.25,
+  "texture_resolution": 256
 }

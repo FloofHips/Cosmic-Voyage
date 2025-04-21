@@ -6,8 +6,10 @@
   "orbit_period_days": 10759.22,
   "closest_approach_angle": 92.4,
   "diameter_km": 116460.0,
+  "size": 90,
   "mass_kg": 5.6834e26,
   "day_length_hours": 10.7,
   "axial_tilt_degrees": 26.73,
+  "texture_resolution": 128,
   "dimension": "cosmic_voyage:saturn"
 }

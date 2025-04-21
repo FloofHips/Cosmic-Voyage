@@ -6,8 +6,10 @@
   "orbit_period_days": 90560.0,
   "closest_approach_angle": 113.6,
   "diameter_km": 2376.0,
+  "size": 8,
   "mass_kg": 1.303e22,
   "day_length_hours": 153.3,
   "axial_tilt_degrees": 122.53,
+  "texture_resolution": 32,
   "dimension": "cosmic_voyage:pluto"
 }

@@ -6,8 +6,10 @@
   "orbit_period_days": 30688.5,
   "closest_approach_angle": 172.4,
   "diameter_km": 50724.0,
+  "size": 85,
   "mass_kg": 8.6810e25,
   "day_length_hours": 17.2,
   "axial_tilt_degrees": 97.77,
+  "texture_resolution": 128,
   "dimension": "cosmic_voyage:uranus"
 }

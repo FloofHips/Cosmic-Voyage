@@ -6,8 +6,10 @@
   "orbit_period_days": 87.969,
   "closest_approach_angle": 77.5,
   "diameter_km": 4879.0,
+  "size": 30,
   "mass_kg": 3.3011e23,
   "day_length_hours": 1407.6,
   "axial_tilt_degrees": 0.034,
+  "texture_resolution": 64,
   "dimension": "cosmic_voyage:mercury"
 }

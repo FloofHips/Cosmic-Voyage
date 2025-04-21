@@ -6,8 +6,10 @@
   "orbit_period_days": 686.971,
   "closest_approach_angle": 336.0,
   "diameter_km": 6779.0,
+  "size": 30,
   "mass_kg": 6.417e23,
   "day_length_hours": 24.7,
   "axial_tilt_degrees": 25.19,
+  "texture_resolution": 64,
   "dimension": "cosmic_voyage:mars"
 }

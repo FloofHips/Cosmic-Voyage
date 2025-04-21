@@ -1,11 +1,14 @@
 package com.fruityspikes.cosmic_voyage.server.data;
 
+import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
-import java.util.Collection;
+import javax.security.sasl.SaslClient;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,8 +26,11 @@ public class CelestialObject {
     private final float closestApproachAngle;
     private final float lengthOfDay;
     private final float diameter;
+    private final float size;
     private final float mass;
+    private final int textureResolution;
     private final float axialTilt;
+    private final boolean hasRings;
     private final Optional<ResourceLocation> dimensionId;
 
     // CODEC for serialization
@@ -36,11 +42,15 @@ public class CelestialObject {
             Codec.FLOAT.fieldOf("orbit_period_days").forGetter(CelestialObject::getOrbitPeriod),
             Codec.FLOAT.fieldOf("closest_approach_angle").forGetter(CelestialObject::getClosestApproachAngle),
             Codec.FLOAT.fieldOf("diameter_km").forGetter(CelestialObject::getDiameter),
+            Codec.FLOAT.fieldOf("size").forGetter(CelestialObject::getSize),
             Codec.FLOAT.fieldOf("mass_kg").forGetter(CelestialObject::getMass),
             Codec.FLOAT.fieldOf("day_length_hours").forGetter(CelestialObject::getLengthOfDay),
             Codec.FLOAT.fieldOf("axial_tilt_degrees").forGetter(CelestialObject::getAxialTilt),
-            ResourceLocation.CODEC.optionalFieldOf("dimension_id").forGetter(CelestialObject::getDimensionId)
+            Codec.BOOL.fieldOf("has_rings").forGetter(CelestialObject::hasRings),
+            Codec.INT.fieldOf("texture_resolution").forGetter(CelestialObject::getTextureResolution),
+            ResourceLocation.CODEC.optionalFieldOf("dimension").forGetter(CelestialObject::getDimensionId)
     ).apply(instance, CelestialObject::new));
+
 
     // Constructor
     public CelestialObject(ResourceLocation name,
@@ -49,10 +59,13 @@ public class CelestialObject {
                            float averageDistance,
                            float orbitPeriod,
                            float closestApproachAngle,
-                           float lengthOfDay,
                            float diameter,
+                           float size,
                            float mass,
+                           float lengthOfDay,
                            float axialTilt,
+                           boolean hasRings,
+                           int textureResolution,
                            Optional<ResourceLocation> dimensionId) {
         this.name = name;
         this.parent = parent;
@@ -62,8 +75,11 @@ public class CelestialObject {
         this.closestApproachAngle = closestApproachAngle;
         this.lengthOfDay = lengthOfDay;
         this.diameter = diameter;
+        this.size = size;
         this.mass = mass;
         this.axialTilt = axialTilt;
+        this.hasRings = hasRings;
+        this.textureResolution = textureResolution;
         this.dimensionId = dimensionId;
     }
 
@@ -93,11 +109,16 @@ public class CelestialObject {
     }
 
     public float getLengthOfDay() {
-        return lengthOfDay;
+
+        return lengthOfDay * 1000;
     }
 
     public float getDiameter() {
         return diameter;
+    }
+
+    public float getSize() {
+        return size;
     }
 
     public float getMass() {
@@ -108,10 +129,16 @@ public class CelestialObject {
         return axialTilt;
     }
 
+    public boolean hasRings() {
+        return hasRings;
+    }
+    public int getTextureResolution() {
+        return textureResolution;
+    }
+
     public Optional<ResourceLocation> getDimensionId() {
         return dimensionId;
     }
-
     // Calculation methods
     public Vec2 calculatePosition(double timeDays, Map<ResourceLocation, CelestialObject> allObjects) {
         if (parent.isEmpty()) {
@@ -158,6 +185,45 @@ public class CelestialObject {
         return E;
     }
 
+    ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(getName().getNamespace(), "textures/space/" + getName() + ".png");
+    ResourceLocation ringTexture = ResourceLocation.fromNamespaceAndPath(getName().getNamespace(), "textures/space/" + getName() + "_rings.png");
+
+    public void render(GuiGraphics guiGraphics, int x, int y, float scale, float time){
+        //System.out.println(this.toString());
+        int renderSize = (int) ((size / 150) * (scale / 5));
+
+        guiGraphics.pose().pushPose();
+        {
+            guiGraphics.pose().translate(x, y, 0);
+            guiGraphics.pose().scale((float) renderSize / 10, (float) renderSize / 10, 1);
+
+            if (this.lengthOfDay > 0) {
+                float rotationDegrees = (time) % 360f;
+                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(rotationDegrees));
+            }
+
+            guiGraphics.blit(
+                    texture,
+                    -getTextureResolution()/2, -getTextureResolution()/2,
+                    0, 0,
+                    getTextureResolution(), getTextureResolution(),
+                    getTextureResolution(), getTextureResolution()
+            );
+            if(hasRings){
+                float ringRotationDegrees = (time * 2) % 360f;
+                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(ringRotationDegrees));
+                guiGraphics.blit(
+                        ringTexture,
+                        (int) (-getTextureResolution()*1.5/2), (int) (-getTextureResolution()*1.5/2),
+                        0, 0,
+                        (int) (getTextureResolution()*1.5), (int) (getTextureResolution()*1.5),
+                        (int) (getTextureResolution()*1.5), (int) (getTextureResolution()*1.5)
+                );
+            }
+        }
+        guiGraphics.pose().popPose();
+    }
+
     @Override
     public String toString() {
         return "CelestialObject{" +
@@ -169,6 +235,7 @@ public class CelestialObject {
                 ", closestApproachAngle=" + closestApproachAngle +
                 ", lengthOfDay=" + lengthOfDay +
                 ", diameter=" + diameter +
+                ", size=" + size +
                 ", mass=" + mass +
                 ", axialTilt=" + axialTilt +
                 ", dimensionId=" + dimensionId +

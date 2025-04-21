@@ -6,8 +6,10 @@
   "orbit_period_days": 60182.0,
   "closest_approach_angle": 46.7,
   "diameter_km": 49244.0,
+  "size": 70,
   "mass_kg": 1.0241e26,
   "day_length_hours": 16.1,
   "axial_tilt_degrees": 28.32,
+  "texture_resolution": 128,
   "dimension": "cosmic_voyage:neptune"
 }

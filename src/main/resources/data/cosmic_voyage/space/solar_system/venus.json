@@ -8,9 +8,11 @@
   "closest_approach_angle": 131.6,
 
   "diameter_km": 12104.0,
+  "size": 60,
   "mass_kg": 4.8675e24,
   "day_length_hours": 2802.0,
   "axial_tilt_degrees": 177.4,
 
+  "texture_resolution": 64,
   "dimension": "cosmic_voyage:venus"
 }

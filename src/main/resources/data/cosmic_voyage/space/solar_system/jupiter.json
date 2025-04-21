@@ -6,8 +6,10 @@
   "orbit_period_days": 4332.59,
   "closest_approach_angle": 14.7,
   "diameter_km": 139820.0,
+  "size": 95,
   "mass_kg": 1.8982e27,
   "day_length_hours": 9.9,
   "axial_tilt_degrees": 3.13,
+  "texture_resolution": 128,
   "dimension": "cosmic_voyage:jupiter"
 }
