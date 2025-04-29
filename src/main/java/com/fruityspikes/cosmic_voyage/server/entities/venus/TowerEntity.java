@@ -2,6 +2,7 @@ package com.fruityspikes.cosmic_voyage.server.entities.venus;
 
 import com.fruityspikes.cosmic_voyage.server.util.legs.LegSolverQuadruped;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -40,11 +41,11 @@ public class TowerEntity extends PathfinderMob {
     }
 
     private void initLegs() {
-        legs[0] = new Leg(this, new Vec3(-1.5, 0, 1.5), 0);  // Front left
-        legs[1] = new Leg(this, new Vec3(1.5, 0, 1.5), 1);  // Front right
+        legs[0] = new Leg(this, new Vec3(2, 0, -2), 0);
+        legs[1] = new Leg(this, new Vec3(2, 0, 2), 1);
 
-        legs[2] = new Leg(this, new Vec3(1.5, 0, -1.5), 2); // Back right
-        legs[3] = new Leg(this, new Vec3(-1.5, 0, -1.5), 3);  // Back left
+        legs[2] = new Leg(this, new Vec3(-2, 0, -2), 2);
+        legs[3] = new Leg(this, new Vec3(-2, 0, 2), 3);
     }
 
     @Override
@@ -64,31 +65,29 @@ public class TowerEntity extends PathfinderMob {
     @Override
     public void tick() {
         super.tick();
-        setYBodyRot(0);
+        //setYBodyRot(0);
         setTargetLegPos();
         updateLegPos();
     }
 
     private void updateLegPos() {
-        float movementThreshold = isMoving() ? 2.0f : 0.2f;
+        for (int i = 0; i < legs.length; i++) {
+            Leg leg = legs[i];
+            leg.tick();
 
-        for (Leg leg : legs) {
-            if (leg.currentPos == null) {
-                leg.currentPos = leg.updatePosition();
-            }
+            if (leg.moving) continue;
 
-            double distance = leg.getTargetPos().distanceTo(leg.currentPos);
+            boolean adj1Moving = legs[(i + 1) % 4].moving;
+            boolean adj2Moving = legs[(i + 3) % 4].moving;
 
-            if (distance > movementThreshold) {
-                leg.currentPos = leg.updatePosition();
-            }
+            if (adj1Moving || adj2Moving) continue;
 
-            if (!isMoving() && distance > 0.05) {
-                Vec3 direction = leg.currentPos.subtract(leg.targetPos).normalize();
-                leg.targetPos = leg.targetPos.add(direction.scale(0.05 * distance));
-            }
+            float threshold = this.isMoving() ? 2.0F : 0.1F;
+            leg.tryMoveToNewTarget(threshold);
         }
     }
+
+
 
     @Override
     public void setYBodyRot(float pOffset) {
@@ -129,15 +128,23 @@ public class TowerEntity extends PathfinderMob {
     public class Leg {
         Vec3 restingOffset;
         Vec3 currentPos;
+        Vec3 startPos;
         Vec3 targetPos;
         TowerEntity entity;
+        int moveDuration = 10;
+        int moveTicks = 0;
+        boolean moving = false;
+
         public Leg(TowerEntity towerEntity, Vec3 restingOffset, int i) {
             this.entity = towerEntity;
             this.restingOffset = restingOffset;
+            this.currentPos = updatePosition(); // Initial position
+            this.targetPos = this.currentPos;
+            this.startPos = this.currentPos;
         }
 
         public Vec3 updatePosition() {
-            Vec3 rotatedOffset = restingOffset.yRot(-entity.getYRot() * ((float)Math.PI / 180F));
+            Vec3 rotatedOffset = restingOffset.yRot(-entity.yBodyRot * ((float)Math.PI / 180F));
             Vec3 mobCenter = entity.position();
             Vec3 startPos = mobCenter
                     .add(rotatedOffset)
@@ -156,9 +163,30 @@ public class TowerEntity extends PathfinderMob {
 
             Vec3 pos = mobCenter.add(rotatedOffset);
             BlockPos groundPos = BlockPos.containing(pos).below();
-            //if (entity.level().getBlockState(groundPos).isSolid()) {
             return Vec3.atBottomCenterOf(groundPos.above());
-            //}
+        }
+
+        public void tick() {
+            if (moving) {
+                moveTicks++;
+                if (moveTicks >= moveDuration) {
+                    moving = false;
+                    currentPos = targetPos;
+                } else {
+                    float progress = getProgress();
+                    currentPos = startPos.lerp(targetPos, progress);
+                }
+            }
+        }
+
+        public void tryMoveToNewTarget(float threshold) {
+            Vec3 newTarget = updatePosition();
+            if (currentPos.distanceTo(newTarget) > threshold) {
+                this.startPos = currentPos;
+                this.targetPos = newTarget;
+                this.moveTicks = 0;
+                this.moving = true;
+            }
         }
 
         public Vec3 getTargetPos() {
@@ -170,6 +198,8 @@ public class TowerEntity extends PathfinderMob {
         }
 
         public float getProgress() {
+            if (!moving || moveDuration <= 0) return 1.0f;
+            return Mth.clamp((float) moveTicks / moveDuration, 0.0f, 1.0f);
         }
     }
 }

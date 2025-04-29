@@ -43,9 +43,45 @@ public class TowerModel<T extends TowerEntity> extends EntityModel<T> {
 
         return LayerDefinition.create(meshdefinition, 16, 16);
     }
-
     @Override
     public void setupAnim(TowerEntity entity, float limbSwing, float limbSwingAmount,
+                          float ageInTicks, float netHeadYaw, float headPitch) {
+        if (entity.legs == null || entity.legs.length < 4) return;
+
+        body.resetPose();
+        leftFrontLeg.resetPose();
+        rightFrontLeg.resetPose();
+        leftBackLeg.resetPose();
+        rightBackLeg.resetPose();
+
+        Vec3 entityPos = entity.position();
+
+        applyLegOffset(entity.legs[0], leftFrontLeg, entityPos);
+        applyLegOffset(entity.legs[1], leftBackLeg, entityPos);
+        applyLegOffset(entity.legs[2], rightFrontLeg, entityPos);
+        applyLegOffset(entity.legs[3], rightBackLeg, entityPos);
+
+    }
+
+    private void applyLegOffset(TowerEntity.Leg leg, ModelPart modelPart, Vec3 entityPos) {
+        if (leg.getCurrentPos() == null) return;
+
+        float progress = leg.getProgress();
+        Vec3 relativePos = leg.getCurrentPos().subtract(entityPos);
+
+        float arcHeight = 4.0F;
+        float arc = (float) Math.sin(progress * Math.PI) * arcHeight;
+
+        modelPart.setPos(
+                (float) relativePos.x * 16,
+                -8.0F + (float) -relativePos.y * 16 - arc,
+                (float) relativePos.z * 16
+        );
+    }
+
+
+
+    public void setupAnimOld(TowerEntity entity, float limbSwing, float limbSwingAmount,
                           float ageInTicks, float netHeadYaw, float headPitch) {
 
         body.resetPose();
