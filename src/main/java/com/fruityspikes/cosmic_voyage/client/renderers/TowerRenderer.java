@@ -5,6 +5,8 @@ import com.fruityspikes.cosmic_voyage.client.client_registries.CVModelLayers;
 import com.fruityspikes.cosmic_voyage.client.models.TowerModel;
 import com.fruityspikes.cosmic_voyage.server.entities.venus.TowerEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -22,24 +24,52 @@ public class TowerRenderer extends MobRenderer<TowerEntity, TowerModel<TowerEnti
 
     @Override
     public void render(TowerEntity pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight) {
-        pEntityYaw = 1;
+
+        //pPoseStack.mulPose(Axis.YP.rotationDegrees(pEntity.yBodyRot));
 
         super.render(pEntity, pEntityYaw, pPartialTick, pPoseStack, pBufferSource, pPackedLight);
 
-//        for (TowerEntity.Leg leg : pEntity.getLegs()) {
-//            pPoseStack.pushPose();
-//            Vec3 pos = leg.getWorldPos().subtract(pEntity.position());
-//            pPoseStack.translate(pos.x, pos.y, pos.z);
-//            LevelRenderer.renderLineBox(pPoseStack, pBufferSource.getBuffer(RenderType.lines()),
-//                    new AABB(-0.1, -0.1, -0.1, 0.1, 0.1, 0.1), 1, 0, 0, 1);
-//
-//            pPoseStack.translate(-pos.x, -pos.y, -pos.z);
-//            pos = leg.getTargetPos().subtract(pEntity.position());
-//            pPoseStack.translate(pos.x, pos.y, pos.z);
-//            LevelRenderer.renderLineBox(pPoseStack, pBufferSource.getBuffer(RenderType.lines()),
-//                    new AABB(-0.1, -0.1, -0.1, 0.1, 0.1, 0.1), 0, 0, 1, 1);
-//            pPoseStack.popPose();
-//        }
+        Vec3 entityPos = pEntity.position();
+
+        for (TowerEntity.Leg leg : pEntity.legs) {
+            if (leg == null) continue;
+
+            if (leg.getTargetPos() != null) {
+                renderLegBox(
+                        pPoseStack, pBufferSource,
+                        leg.getTargetPos(), entityPos,
+                        1.0f, 0.0f, 0.0f, 1.0f
+                );
+            }
+
+            if (leg.getCurrentPos() != null) {
+                renderLegBox(
+                        pPoseStack, pBufferSource,
+                        leg.getCurrentPos(), entityPos,
+                        0.0f, 0.0f, 1.0f, 1.0f
+                );
+            }
+        }
+    }
+
+    private void renderLegBox(PoseStack poseStack, MultiBufferSource buffer,
+                              Vec3 worldPos, Vec3 entityPos,
+                              float r, float g, float b, float a) {
+        poseStack.pushPose();
+        poseStack.translate(
+                worldPos.x - entityPos.x,
+                worldPos.y - entityPos.y,
+                worldPos.z - entityPos.z
+        );
+
+        LevelRenderer.renderLineBox(
+                poseStack,
+                buffer.getBuffer(RenderType.lines()),
+                new AABB(-0.1, -0.1, -0.1, 0.1, 0.1, 0.1),
+                r, g, b, a
+        );
+
+        poseStack.popPose();
     }
 
     @Override
