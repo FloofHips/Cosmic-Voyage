@@ -28,9 +28,6 @@ public class TowerRenderer extends MobRenderer<TowerEntity, TowerModel<TowerEnti
 
     @Override
     public void render(TowerEntity pEntity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight) {
-
-        //pPoseStack.mulPose(Axis.YP.rotationDegrees(pEntity.yBodyRot));
-
         super.render(pEntity, pEntityYaw, pPartialTick, pPoseStack, pBufferSource, pPackedLight);
 
         Vec3 entityPos = pEntity.position();
@@ -42,7 +39,7 @@ public class TowerRenderer extends MobRenderer<TowerEntity, TowerModel<TowerEnti
                 renderLegBox(
                         pPoseStack, pBufferSource,
                         leg.getTargetPos(), entityPos,
-                        1.0f, 0.0f, 0.0f, 1.0f
+                        1.0f, 0.0f, 0.0f, 1.0f, leg.getIndex()
                 );
             }
 
@@ -50,31 +47,16 @@ public class TowerRenderer extends MobRenderer<TowerEntity, TowerModel<TowerEnti
                 renderLegBox(
                         pPoseStack, pBufferSource,
                         leg.getCurrentPos(), entityPos,
-                        0.0f, 0.0f, 1.0f, 1.0f
+                        0.0f, 0.0f, 1.0f, 1.0f, leg.getIndex()
                 );
             }
         }
-
-        Font font = Minecraft.getInstance().font;
-        String text = "yBodyRot: " + pEntity.yBodyRot;
-
-        pPoseStack.pushPose();
-
-        pPoseStack.translate(0.0, 7.0, 0.0);
-
-        float scale = 0.025f;
-        pPoseStack.scale(-scale, -scale, scale);
-
-        float xOffset = -font.width(text) / 2f;
-        font.drawInBatch(text, xOffset, 0, 0xFFFFFF, false, pPoseStack.last().pose(), pBufferSource, Font.DisplayMode.NORMAL, 0, 255);
-
-        pPoseStack.popPose();
-
     }
 
     private void renderLegBox(PoseStack poseStack, MultiBufferSource buffer,
                               Vec3 worldPos, Vec3 entityPos,
-                              float r, float g, float b, float a) {
+                              float r, float g, float b, float a,
+                              int index) {
         poseStack.pushPose();
         poseStack.translate(
                 worldPos.x - entityPos.x,
@@ -82,6 +64,7 @@ public class TowerRenderer extends MobRenderer<TowerEntity, TowerModel<TowerEnti
                 worldPos.z - entityPos.z
         );
 
+        // Draw the box
         LevelRenderer.renderLineBox(
                 poseStack,
                 buffer.getBuffer(RenderType.lines()),
@@ -89,9 +72,30 @@ public class TowerRenderer extends MobRenderer<TowerEntity, TowerModel<TowerEnti
                 r, g, b, a
         );
 
+        // Draw label text
+        Font font = Minecraft.getInstance().font;
+        String text = "#" + index + " " + getLabel(index);
+
+        //poseStack.pushPose();
+        poseStack.translate(0, 0.3, 0); // raise label above the leg
+        //poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation().invert());
+        poseStack.scale(-0.025f, -0.025f, 0.025f);
+
+        float xOffset = -font.width(text) / 2f;
+        font.drawInBatch(text, xOffset, 0, 0xFFFFFF, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, 255);
+
+        //poseStack.popPose();
         poseStack.popPose();
     }
-
+    public String getLabel(int index){
+        return switch (index) {
+            case 0 -> "Front Left";
+            case 1 -> "Front Right";
+            case 2 -> "Back Left";
+            case 3 -> "Back Right";
+            default -> "Unknown";
+        };
+    }
     @Override
     public ResourceLocation getTextureLocation(TowerEntity explorerEntity) {
         return TEXTURE;

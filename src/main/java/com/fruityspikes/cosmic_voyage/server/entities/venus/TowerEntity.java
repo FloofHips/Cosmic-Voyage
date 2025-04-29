@@ -22,8 +22,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class TowerEntity extends PathfinderMob {
-
-    //public LegSolverQuadruped legSolver = new LegSolverQuadruped(-2F, 2F, 2F, 2F, 1);
     private Vec3 bodyOffset = Vec3.ZERO;
     private float bodyTilt;
 
@@ -41,11 +39,11 @@ public class TowerEntity extends PathfinderMob {
     }
 
     private void initLegs() {
-        legs[0] = new Leg(this, new Vec3(2, 0, -2), 0);
-        legs[1] = new Leg(this, new Vec3(2, 0, 2), 1);
+        legs[1] = new Leg(this, new Vec3(-1.5, 0, 1.5), 1);
+        legs[2] = new Leg(this, new Vec3(1.5, 0, -1.5), 2);
 
-        legs[2] = new Leg(this, new Vec3(-2, 0, -2), 2);
-        legs[3] = new Leg(this, new Vec3(-2, 0, 2), 3);
+        legs[3] = new Leg(this, new Vec3(-1.5, 0, -1.5), 3);
+        legs[0] = new Leg(this, new Vec3(1.5, 0, 1.5), 0);
     }
 
     @Override
@@ -125,6 +123,75 @@ public class TowerEntity extends PathfinderMob {
                 .anyMatch(state -> !state.isAir() && state.blocksMotion());
     }
 
+    public Vec3 getAverageLegPosition() {
+        Vec3 sum = Vec3.ZERO;
+        int count = 0;
+
+        for (Leg leg : legs) {
+            if (leg != null && leg.getTargetPos() != null) {
+                sum = sum.add(leg.getTargetPos());
+                count++;
+            }
+        }
+
+        return count == 0 ? position() : sum.scale(1.0 / count);
+    }
+
+    public Vec3 getBodyPosition() {
+        Vec3 avg = getAverageLegPosition();
+        return avg.subtract(0, 32, 0);
+    }
+
+    public float getBodyRoll() {
+        double leftY = 0, rightY = 0;
+        int leftCount = 0, rightCount = 0;
+
+        for (Leg leg : legs) {
+            if (leg != null && leg.getCurrentPos() != null) {
+                double y = leg.getCurrentPos().y;
+                if (leg.getIndex() % 2 == 0) {
+                    leftY += y;
+                    leftCount++;
+                } else if (leg.getIndex() % 2 != 0) {
+                    rightY += y;
+                    rightCount++;
+                }
+            }
+        }
+
+        if (leftCount == 0 || rightCount == 0) return 0;
+
+        double avgLeftY = leftY / leftCount;
+        double avgRightY = rightY / rightCount;
+
+        return (float) (avgLeftY - avgRightY);
+    }
+
+    public float getBodyPitch() {
+        double frontY = 0, backY = 0;
+        int frontCount = 0, backCount = 0;
+
+        for (Leg leg : legs) {
+            if (leg != null && leg.getCurrentPos() != null) {
+                double y = leg.getCurrentPos().y;
+                if (leg.getIndex() < 2) {
+                    frontY += y;
+                    frontCount++;
+                } else if (leg.getIndex() > 1) {
+                    backY += y;
+                    backCount++;
+                }
+            }
+        }
+
+        if (frontCount == 0 || backCount == 0) return 0;
+
+        double avgFrontY = frontY / frontCount;
+        double avgBackY = backY / backCount;
+
+        return (float) (avgBackY - avgFrontY);
+    }
+
     public class Leg {
         Vec3 restingOffset;
         Vec3 currentPos;
@@ -134,6 +201,7 @@ public class TowerEntity extends PathfinderMob {
         int moveDuration = 10;
         int moveTicks = 0;
         boolean moving = false;
+        int index;
 
         public Leg(TowerEntity towerEntity, Vec3 restingOffset, int i) {
             this.entity = towerEntity;
@@ -141,6 +209,7 @@ public class TowerEntity extends PathfinderMob {
             this.currentPos = updatePosition(); // Initial position
             this.targetPos = this.currentPos;
             this.startPos = this.currentPos;
+            this.index = i;
         }
 
         public Vec3 updatePosition() {
@@ -200,6 +269,14 @@ public class TowerEntity extends PathfinderMob {
         public float getProgress() {
             if (!moving || moveDuration <= 0) return 1.0f;
             return Mth.clamp((float) moveTicks / moveDuration, 0.0f, 1.0f);
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public Vec3 getRestingOffset() {
+            return restingOffset;
         }
     }
 }
