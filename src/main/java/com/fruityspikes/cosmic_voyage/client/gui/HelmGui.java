@@ -341,8 +341,8 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
 //
 //                shipPos = shipPos.add(new Vec2(moveX * 0.05f,moveY * 0.05f
 //                ));
-                this.posX += (int) ((int) delta.x * 0.05f);
-                this.posY += (int) ((int) delta.y * 0.05f);
+                this.posX += (int) ((int) delta.x * 0.05f * (scale / 50));
+                this.posY += (int) ((int) delta.y * 0.05f * (scale / 50));
 //            }
 
 //            NetworkHandler.CHANNEL.sendToServer(

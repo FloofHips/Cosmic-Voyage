@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CVModelLayers {
     public static final ModelLayerLocation SHIP = register("ship");
+    public static final ModelLayerLocation EXPLORER = register("explorer");
+    public static final ModelLayerLocation TOWER = register("tower");
 
     private static ModelLayerLocation register(String name) {
         return register(name, "main");

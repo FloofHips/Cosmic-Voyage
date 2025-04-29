@@ -10,6 +10,7 @@
   "mass_kg": 8.6810e25,
   "day_length_hours": 17.2,
   "axial_tilt_degrees": 97.77,
-  "texture_resolution": 128,
+  "texture_resolution": 256,
+  "has_rings": true,
   "dimension": "cosmic_voyage:uranus"
 }

@@ -2,9 +2,13 @@ package com.fruityspikes.cosmic_voyage;
 
 import com.fruityspikes.cosmic_voyage.client.client_registries.CVModelLayers;
 import com.fruityspikes.cosmic_voyage.client.gui.HelmGui;
+import com.fruityspikes.cosmic_voyage.client.models.ExplorerModel;
 import com.fruityspikes.cosmic_voyage.client.models.ShipModel;
+import com.fruityspikes.cosmic_voyage.client.models.TowerModel;
 import com.fruityspikes.cosmic_voyage.client.renderers.AcidRenderer;
+import com.fruityspikes.cosmic_voyage.client.renderers.ExplorerRenderer;
 import com.fruityspikes.cosmic_voyage.client.renderers.ShipRenderer;
+import com.fruityspikes.cosmic_voyage.client.renderers.TowerRenderer;
 import com.fruityspikes.cosmic_voyage.data.CVBlockstateGen;
 import com.fruityspikes.cosmic_voyage.data.CVItemModelGen;
 import com.fruityspikes.cosmic_voyage.data.CVLangGen;
@@ -195,11 +199,15 @@ public class CosmicVoyage
         @SubscribeEvent
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(CVModelLayers.SHIP, ShipModel::createBodyLayer);
+            event.registerLayerDefinition(CVModelLayers.EXPLORER, ExplorerModel::createBodyLayer);
+            event.registerLayerDefinition(CVModelLayers.TOWER, TowerModel::createBodyLayer);
         }
 
         @SubscribeEvent
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(SHIP.get(), ShipRenderer::new);
+            event.registerEntityRenderer(CVEntityRegistry.SHIP.get(), ShipRenderer::new);
+            event.registerEntityRenderer(CVEntityRegistry.EXPLORER.get(), ExplorerRenderer::new);
+            event.registerEntityRenderer(CVEntityRegistry.TOWER.get(), TowerRenderer::new);
         }
         @SubscribeEvent
         public static void registerClientExtensions(RegisterClientExtensionsEvent event) {

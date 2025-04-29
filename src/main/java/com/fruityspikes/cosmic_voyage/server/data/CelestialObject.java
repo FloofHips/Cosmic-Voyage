@@ -1,5 +1,6 @@
 package com.fruityspikes.cosmic_voyage.server.data;
 
+import com.fruityspikes.cosmic_voyage.CosmicVoyage;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -46,7 +47,7 @@ public class CelestialObject {
             Codec.FLOAT.fieldOf("mass_kg").forGetter(CelestialObject::getMass),
             Codec.FLOAT.fieldOf("day_length_hours").forGetter(CelestialObject::getLengthOfDay),
             Codec.FLOAT.fieldOf("axial_tilt_degrees").forGetter(CelestialObject::getAxialTilt),
-            Codec.BOOL.fieldOf("has_rings").forGetter(CelestialObject::hasRings),
+            Codec.BOOL.lenientOptionalFieldOf("has_rings", false).forGetter(CelestialObject::hasRings),
             Codec.INT.fieldOf("texture_resolution").forGetter(CelestialObject::getTextureResolution),
             ResourceLocation.CODEC.optionalFieldOf("dimension").forGetter(CelestialObject::getDimensionId)
     ).apply(instance, CelestialObject::new));
@@ -185,17 +186,23 @@ public class CelestialObject {
         return E;
     }
 
-    ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(getName().getNamespace(), "textures/space/" + getName() + ".png");
-    ResourceLocation ringTexture = ResourceLocation.fromNamespaceAndPath(getName().getNamespace(), "textures/space/" + getName() + "_rings.png");
+    ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/space/unknown.png");
+    ResourceLocation ringTexture = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/space/unknown.png");
 
     public void render(GuiGraphics guiGraphics, int x, int y, float scale, float time){
-        //System.out.println(this.toString());
         int renderSize = (int) ((size / 150) * (scale / 5));
-
+        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/space/unknown.png");
+        ResourceLocation ring_texture = ResourceLocation.fromNamespaceAndPath(CosmicVoyage.MODID, "textures/space/unknown.png");
+        if(this.name!=null){
+            texture = ResourceLocation.fromNamespaceAndPath(name.getNamespace(), "textures/space/" + name.getPath() + ".png");
+            if(this.hasRings){
+                ring_texture = ResourceLocation.fromNamespaceAndPath(name.getNamespace(), "textures/space/" + name.getPath() + "_rings.png");
+            }
+        }
         guiGraphics.pose().pushPose();
         {
             guiGraphics.pose().translate(x, y, 0);
-            guiGraphics.pose().scale((float) renderSize / 10, (float) renderSize / 10, 1);
+            guiGraphics.pose().scale((float) renderSize / 150, (float) renderSize / 150, 1);
 
             if (this.lengthOfDay > 0) {
                 float rotationDegrees = (time) % 360f;
@@ -213,11 +220,11 @@ public class CelestialObject {
                 float ringRotationDegrees = (time * 2) % 360f;
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(ringRotationDegrees));
                 guiGraphics.blit(
-                        ringTexture,
-                        (int) (-getTextureResolution()*1.5/2), (int) (-getTextureResolution()*1.5/2),
+                        ring_texture,
+                        -getTextureResolution()/2, -getTextureResolution()/2,
                         0, 0,
-                        (int) (getTextureResolution()*1.5), (int) (getTextureResolution()*1.5),
-                        (int) (getTextureResolution()*1.5), (int) (getTextureResolution()*1.5)
+                        getTextureResolution(), getTextureResolution(),
+                        getTextureResolution(), getTextureResolution()
                 );
             }
         }
