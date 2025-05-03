@@ -46,6 +46,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
     public boolean hasPower = true;
     public int shipTick = 0;
     private Map<CelestialObject, Vec2> currentCelestialPositions;
+    public float poweringUpTicks = 1;
 
     public HelmGui(HelmMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -152,12 +153,12 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
             renderMultiplicativeQuad(guiGraphics, SCREEN, this.leftPos + 19, this.topPos + 23, 298, 0, 298, 210, 1024, 512, -2779381);
         }
 
-        float alpha = velocity / 100f;
+        float alpha = poweringUpTicks;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        guiGraphics.setColor(1f, 1f, 1f, 0);
+        guiGraphics.setColor(1f, 1f, 1f, alpha);
         guiGraphics.blit(SCREEN, this.leftPos + 19, this.topPos + 23, 0, 0, 298, 210, 1024, 512);
         guiGraphics.setColor(1f, 1f, 1f, 1f);
         guiGraphics.disableScissor();
@@ -204,7 +205,7 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
                         obj.getName().getPath(),
                         x,
                         y - this.font.lineHeight/2,
-                        0xFFFFFF
+                        0xFFFFFF01, false
                 );
         }
 
@@ -312,7 +313,8 @@ public class HelmGui extends AbstractContainerScreen<HelmMenu> {
 
     public void helmTick() {
         shipTick++;
-
+        if(poweringUpTicks>0)
+            poweringUpTicks = poweringUpTicks - 0.05F;
         slider.tick();
         ball.tick();
 

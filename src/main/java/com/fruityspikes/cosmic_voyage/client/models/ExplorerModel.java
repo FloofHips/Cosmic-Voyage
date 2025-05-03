@@ -52,31 +52,34 @@ public class ExplorerModel<T extends ExplorerEntity> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-//        if ((int)ageInTicks % 4 != 0) {  // Using modulus on ageInTicks
-//            return;
-//        }
+        if ((int)ageInTicks % 4 != 0) {
+            return;
+        }
         body.resetPose();
+        body_top.resetPose();
+        leftArm.resetPose();
+        rightArm.resetPose();
         leftLeg.resetPose();
         rightLeg.resetPose();
 
-        this.body_top.yRot = quantizeAngle(netHeadYaw * ((float)Math.PI / 180F), 8);
-        this.body_top.xRot = quantizeAngle(headPitch * ((float)Math.PI / 180F), 8);
+        this.body_top.yRot = netHeadYaw * ((float)Math.PI / 180F);
+        this.body_top.xRot = headPitch * ((float)Math.PI / 180F);
 
-        this.body.yRot = Mth.sin(quantizeAngle(ageInTicks * 0.05F, 4)) * 0.1F;
-        this.body.xRot = Mth.sin(quantizeAngle(ageInTicks * 0.1F, 4)) * 0.05F;
+        this.body.yRot = Mth.sin(ageInTicks * 0.05F) * 0.1F;
+        this.body.xRot = Mth.sin(ageInTicks * 0.1F) * 0.05F;
 
         float legAngle = limbSwing * 0.6662F;
-        this.rightLeg.xRot = quantizeAngle(Mth.cos(legAngle + (float)Math.PI) * 1.4F * limbSwingAmount, 6);
-        this.leftLeg.xRot = quantizeAngle(Mth.cos(legAngle) * 1.4F * limbSwingAmount, 6);
+        this.rightLeg.xRot = Mth.cos(legAngle + (float)Math.PI) * 1.4F * limbSwingAmount;
+        this.leftLeg.xRot = Mth.cos(legAngle) * 1.4F * limbSwingAmount;
 
         float armAngle = limbSwing * 0.6662F;
-        this.leftArm.xRot = quantizeAngle(Mth.cos(armAngle + (float)Math.PI) * 0.8F * limbSwingAmount, 6);
-        this.rightArm.xRot = quantizeAngle(Mth.cos(armAngle) * 0.8F * limbSwingAmount, 6);
+        this.leftArm.xRot = Mth.cos(armAngle + (float)Math.PI) * 0.8F * limbSwingAmount;
+        this.rightArm.xRot = Mth.cos(armAngle) * 0.8F * limbSwingAmount;
 
-        if (limbSwingAmount > 0.5f){
-            this.body_top.y = quantizeAngle(Mth.sin(ageInTicks * 0.1F), 4) * 0.05F;
-            this.body_top.x = quantizeAngle(Mth.cos(ageInTicks * 0.13F), 4) * 0.05F;
-        }
+//        if (limbSwingAmount > 0.5f){
+//            this.body_top.y = (ageInTicks * 0.1F) * 0.05F;
+//            this.body_top.x = (ageInTicks * 0.13F) * 0.05F;
+//        }
 
 //        if (limbSwingAmount < 0.1f) {
 //            this.body_top.yRot += quantizeAngle(Mth.sin(ageInTicks * 0.1F), 4) * 0.05F;

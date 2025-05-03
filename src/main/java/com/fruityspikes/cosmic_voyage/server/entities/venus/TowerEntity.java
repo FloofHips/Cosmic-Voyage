@@ -39,11 +39,11 @@ public class TowerEntity extends PathfinderMob {
     }
 
     private void initLegs() {
-        legs[1] = new Leg(this, new Vec3(-1.5, 0, 1.5), 1);
-        legs[2] = new Leg(this, new Vec3(1.5, 0, -1.5), 2);
+        legs[1] = new Leg(this, new Vec3(-2, 0, 2), 1);
+        legs[2] = new Leg(this, new Vec3(2, 0, -2), 2);
 
-        legs[3] = new Leg(this, new Vec3(-1.5, 0, -1.5), 3);
-        legs[0] = new Leg(this, new Vec3(1.5, 0, 1.5), 0);
+        legs[3] = new Leg(this, new Vec3(-2, 0, -2), 3);
+        legs[0] = new Leg(this, new Vec3(2, 0, 2), 0);
     }
 
     @Override
@@ -76,11 +76,11 @@ public class TowerEntity extends PathfinderMob {
             if (leg.moving) continue;
 
             boolean adj1Moving = legs[(i + 1) % 4].moving;
-            boolean adj2Moving = legs[(i + 3) % 4].moving;
+            boolean adj2Moving = legs[(i + 2) % 4].moving;
 
             if (adj1Moving || adj2Moving) continue;
 
-            float threshold = this.isMoving() ? 2.0F : 0.1F;
+            float threshold = this.isMoving() ? 1.0F : 0.1F;
             leg.tryMoveToNewTarget(threshold);
         }
     }
@@ -124,22 +124,23 @@ public class TowerEntity extends PathfinderMob {
     }
 
     public Vec3 getAverageLegPosition() {
-        Vec3 sum = Vec3.ZERO;
-        int count = 0;
+        Vec3 momentum = this.getDeltaMovement();
+        Vec3 balancePoint = Vec3.ZERO;
 
-        for (Leg leg : legs) {
-            if (leg != null && leg.getTargetPos() != null) {
-                sum = sum.add(leg.getTargetPos());
-                count++;
-            }
+        // Weight front legs differently than rear legs
+        float[] legWeights = {0.3f, 0.3f, 0.2f, 0.2f}; // Front-heavy
+
+        for (int i = 0; i < 4; i++) {
+            Vec3 legOffset = legs[i].getCurrentPos().subtract(this.position());
+            balancePoint = balancePoint.add(legOffset.scale(legWeights[i]));
         }
 
-        return count == 0 ? position() : sum.scale(1.0 / count);
+        // Apply momentum influence
+        return balancePoint.add(momentum.scale(0.5f));
     }
 
     public Vec3 getBodyPosition() {
-        Vec3 avg = getAverageLegPosition();
-        return avg.subtract(0, 32, 0);
+        return getAverageLegPosition();
     }
 
     public float getBodyRoll() {
